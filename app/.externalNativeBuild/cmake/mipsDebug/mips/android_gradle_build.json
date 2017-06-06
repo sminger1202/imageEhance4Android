@@ -1,0 +1,41 @@
+
+{
+	"buildFiles" : 
+	[
+		"/Users/shiming/Project/publicWork/android-ndk/hello-jni/app/src/main/cpp/CMakeLists.txt"
+	],
+	"cFileExtensions" : [ "c" ],
+	"cleanCommands" : 
+	[
+		"/Users/shiming/Library/Android/sdk/cmake/3.6.3155560/bin/cmake --build /Users/shiming/Project/publicWork/android-ndk/hello-jni/app/.externalNativeBuild/cmake/mipsDebug/mips --target clean"
+	],
+	"libraries" : 
+	{
+		"hello-jni-Debug-mips" : 
+		{
+			"abi" : "mips",
+			"artifactName" : "hello-jni",
+			"buildCommand" : "/Users/shiming/Library/Android/sdk/cmake/3.6.3155560/bin/cmake --build /Users/shiming/Project/publicWork/android-ndk/hello-jni/app/.externalNativeBuild/cmake/mipsDebug/mips --target hello-jni",
+			"buildType" : "debug",
+			"files" : 
+			[
+				
+				{
+					"flags" : "  -target mipsel-none-linux-android -gcc-toolchain /Users/shiming/Library/Android/sdk/ndk-bundle/toolchains/mipsel-linux-android-4.9/prebuilt/darwin-x86_64 --sysroot=/Users/shiming/Library/Android/sdk/ndk-bundle/platforms/android-23/arch-mips -Dhello_jni_EXPORTS  -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mips32 -Wa,--noexecstack -Wformat -Werror=format-security -g -DANDROID -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mips32 -Wa,--noexecstack -Wformat -Werror=format-security  -O0 -fno-limit-debug-info -O0 -fno-limit-debug-info  -fPIC      -c ",
+					"src" : "/Users/shiming/Project/publicWork/android-ndk/hello-jni/app/src/main/cpp/hello-jni.c",
+					"workingDirectory" : "/Users/shiming/Project/publicWork/android-ndk/hello-jni/app/.externalNativeBuild/cmake/mipsDebug/mips"
+				}
+			],
+			"output" : "/Users/shiming/Project/publicWork/android-ndk/hello-jni/app/build/intermediates/cmake/mips/debug/obj/mips/libhello-jni.so",
+			"toolchain" : "15676040024837190235"
+		}
+	},
+	"toolchains" : 
+	{
+		"15676040024837190235" : 
+		{
+			"cCompilerExecutable" : "/Users/shiming/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang",
+			"cppCompilerExecutable" : "/Users/shiming/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++"
+		}
+	}
+}

@@ -1,0 +1,206 @@
+/*
+ * Copyright (C) 2016 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.example.hellojni;
+
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Debug;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.MediaController;
+import android.opengl.GLUtils;
+
+//VarifyRender|VideoPreviewView
+public class EnhanceActivity extends AppCompatActivity {
+    final String TAG = getClass().getSimpleName();
+    private VideoPreviewView mPreviewView;
+    private Button playButton;
+    private Button toggleButton;
+    private Button CLButton;
+    public Context mContxt;
+
+    private static final int GRANT_PERMISSIONS_REQUEST_CODE = 101;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_hello_jni);
+        mContxt = this;
+        playButton = (Button)findViewById(R.id.playbotton);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "is playing :" + mPreviewView.isPlaying());
+                if(mPreviewView.isPlaying()) {
+                    mPreviewView.pause();
+                } else {
+                    mPreviewView.start();
+                }
+            }
+        });
+        toggleButton = (Button)findViewById(R.id.toggle);
+        toggleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "toggle Enchance");
+                GLUtil.sIsEnhance = ! GLUtil.sIsEnhance;
+            }
+        });
+        CLButton = (Button)findViewById(R.id.toggleCL);
+        CLButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                GLUtil.sIsOpenClPrepared =
+                Log.d(TAG, "opencl is prepared.");
+            }
+        });
+        mPreviewView = (VideoPreviewView)findViewById(R.id.playview);
+        mPreviewView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "onclick" + GLUtil.sWidth + "x" +GLUtil.sHeight);
+                WindowManager wm = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+                float ratio = (float)( mPreviewView.getHeight() / mPreviewView.getWidth());
+                GLUtil.sWidth = wm.getDefaultDisplay().getWidth();
+                GLUtil.sHeight = (int)(GLUtil.sWidth * ratio);
+                mPreviewView.requestLayout();
+                mPreviewView.invalidate();
+            }
+        });
+        mPreviewView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        // TODO Auto-generated method stub
+        super.onTouchEvent(event);
+
+        return false;
+    }
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.d(TAG,"onPause");
+        mPreviewView.pause();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Log.d(TAG, "onResume");
+        mPreviewView.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+        mPreviewView.stopPlayback();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case GRANT_PERMISSIONS_REQUEST_CODE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay!
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+                    showRationaleDialog();
+
+                }
+                return;
+            }
+        }
+    }
+
+    private void showRationaleDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage("读文件权限")
+                .setCancelable(true)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                       // CameraActivity.this.finish();
+                    }
+                }).show();
+    }
+
+    /* A native method that is implemented by the
+     * 'hello-jni' native library, which is packaged
+     * with this application.
+     */
+    public native String  stringFromJNI();
+
+    /* This is another native method declaration that is *not*
+     * implemented by 'hello-jni'. This is simply to show that
+     * you can declare as many native methods in your Java code
+     * as you want, their implementation is searched in the
+     * currently loaded native libraries only the first time
+     * you call them.
+     *
+     * Trying to call this function will result in a
+     * java.lang.UnsatisfiedLinkError exception !
+     */
+    public native String  TestJNI(int a);
+
+    public static native boolean initComputerPlatform();
+
+    public static native void setTextureIds( int srcTextureId, int dstTextureId,
+                                             int srcWidth, int srcHeight,
+                                             int dstWidht, int dstHeight);
+
+    public static native void renderCL();
+
+    public static native void release();
+
+    public static native int GLGetProgram();
+
+    /* this is used to load the 'hello-jni' library on application
+     * startup. The library has already been unpacked into
+     * /data/data/com.example.hellojni/lib/libhello-jni.so at
+     * installation time by the package manager.
+     */
+    static {
+        System.loadLibrary("EGL");
+        System.loadLibrary("GLESv2");
+        System.loadLibrary("OpenCL");
+        System.loadLibrary("hello-jni");
+
+    }
+}

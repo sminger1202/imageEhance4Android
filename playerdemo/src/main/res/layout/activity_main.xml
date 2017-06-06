@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_hello_jni"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.playerdemo.MainActivity">
+
+    <com.example.playerdemo.VideoPreviewView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/playview"
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:clickable="true"
+        tools:context="com.muneikh.ui.CameraActivity" />
+    <Switch
+        android:id="@+id/modeToggle"
+        android:layout_below="@id/playview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginStart="40dp"
+        android:text="增强" />
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_below="@+id/modeToggle"
+        android:id="@+id/linearLayoutCompat">
+
+        <Button
+            android:id="@+id/playbotton"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:text="播放"/>
+
+        <Button
+            android:id="@+id/toggleGL"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            android:text="GL"/>
+        <Button
+            android:id="@+id/toggleCL"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            android:text="CL"/>
+        <Button
+            android:id="@+id/copy"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:visibility="gone"
+            android:text="copy"/>
+
+
+    </android.support.v7.widget.LinearLayoutCompat>
+
+
+
+</RelativeLayout>

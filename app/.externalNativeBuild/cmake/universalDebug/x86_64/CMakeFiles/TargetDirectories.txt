@@ -1,0 +1,3 @@
+/Users/shiming/Project/publicWork/android-ndk/hello-jni/app/.externalNativeBuild/cmake/universalDebug/x86_64/CMakeFiles/edit_cache.dir
+/Users/shiming/Project/publicWork/android-ndk/hello-jni/app/.externalNativeBuild/cmake/universalDebug/x86_64/CMakeFiles/rebuild_cache.dir
+/Users/shiming/Project/publicWork/android-ndk/hello-jni/app/.externalNativeBuild/cmake/universalDebug/x86_64/CMakeFiles/hello-jni.dir

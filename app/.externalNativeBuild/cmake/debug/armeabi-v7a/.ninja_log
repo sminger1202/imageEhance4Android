@@ -1,0 +1,9 @@
+# ninja log v5
+1	81	0	CMakeFiles/hello-jni.dir/platformGL.cpp.o	c309db122e87efae
+1	107	0	CMakeFiles/hello-jni.dir/platformCL.cpp.o	f49fb01aa396d9cb
+0	117	0	CMakeFiles/hello-jni.dir/EnhanceInterface.cpp.o	5f51c16d70d60bab
+117	176	0	/Users/shiming/Project/publicWork/android-ndk/hello-jni/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libhello-jni.so	39e0f6a23569d5cc
+1	69	0	CMakeFiles/hello-jni.dir/platformGL.cpp.o	c309db122e87efae
+1	97	0	CMakeFiles/hello-jni.dir/platformCL.cpp.o	f49fb01aa396d9cb
+0	104	0	CMakeFiles/hello-jni.dir/EnhanceInterface.cpp.o	5f51c16d70d60bab
+104	180	0	/Users/shiming/Project/publicWork/android-ndk/hello-jni/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libhello-jni.so	39e0f6a23569d5cc
