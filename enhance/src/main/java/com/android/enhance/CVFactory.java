@@ -6,8 +6,8 @@ package com.android.enhance;
 
 public class CVFactory {
     public static String ENHANCE = "enhance";
-    public static Engine mEngine;
-    public static synchronized Engine getEngineInstance(String EngineType) {
+    public static IEngine mEngine;
+    public static synchronized IEngine getEngineInstance(String EngineType) {
         try {
             if (EngineType == ENHANCE && mEngine == null) {
                 mEngine = EnhanceEngine.class.newInstance();

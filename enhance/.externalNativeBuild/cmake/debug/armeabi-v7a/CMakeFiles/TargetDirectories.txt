@@ -1,3 +1,0 @@
-/Users/shiming/Project/publicWork/android-ndk/hello-jni/enhance/.externalNativeBuild/cmake/debug/armeabi-v7a/CMakeFiles/edit_cache.dir
-/Users/shiming/Project/publicWork/android-ndk/hello-jni/enhance/.externalNativeBuild/cmake/debug/armeabi-v7a/CMakeFiles/rebuild_cache.dir
-/Users/shiming/Project/publicWork/android-ndk/hello-jni/enhance/.externalNativeBuild/cmake/debug/armeabi-v7a/CMakeFiles/shader.dir

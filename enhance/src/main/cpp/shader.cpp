@@ -2,11 +2,6 @@
 // Created by 史明 on 2017/5/26.
 //
 
-//{
-//return env->NewStringUTF("Enhance from JNI !  Compiled with ABI " ABI "." );
-//}
-
-
 #include <jni.h>
 #include <cstring>
 #include "utils.h"

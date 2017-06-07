@@ -9,7 +9,8 @@ import android.util.Log;
 import android.view.Surface;
 
 import com.android.enhance.CVFactory;
-import com.android.enhance.Engine;
+import com.android.enhance.EngineBase;
+import com.android.enhance.IEngine;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -38,7 +39,7 @@ public class VarifyRender implements GLSurfaceView.Renderer,
     public boolean isReady = false;
     private float[] transform = new float[16];
     private long num = 0;
-    static Engine mEnhanceEngine;
+    static IEngine mEnhanceEngine;
 
 
     public VarifyRender(Context context, GLSurfaceView glSurfaceView){

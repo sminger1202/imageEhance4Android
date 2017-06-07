@@ -43,7 +43,6 @@ public class VideoPreviewView extends GLSurfaceView
             }
         });
         mVarifyRender.setMediaPlayer( mMediaPlayer );
-
     }
 
     public void setMediaController(MediaController controller) {

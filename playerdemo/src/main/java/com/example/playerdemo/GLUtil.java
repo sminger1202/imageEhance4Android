@@ -12,6 +12,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
+import static android.opengl.GLES20.GL_ARRAY_BUFFER;
 import static android.opengl.GLES20.GL_TEXTURE_2D;
 import static android.opengl.GLES20.glFinish;
 
@@ -50,29 +51,29 @@ public class GLUtil {
                     "    gl_FragColor = texture2D(sTexture, vTextureCoord);\n" +
                     "}\n";
 
-//    private static final float FULL_RECTANGLE_COORDS[] = {
-//            -1.0f, -1.0f,   // 0 bottom left
-//            1.0f, -1.0f,   // 1 bottom right
-//            -1.0f, 1.0f,   // 2 top left
-//            1.0f, 1.0f,   // 3 top right
-//    };
-    private static final float FULL_RECTANGLE_COORDS[] = {
-        1.0f, 1.0f,   // 3 top right
-        -1.0f, 1.0f,   // 2 top left
-        1.0f, -1.0f,   // 1 bottom right
-        -1.0f, -1.0f,   // 0 bottom left
+    private static final float VERTICES_DATA[] = {
+            // X, Y, U, V
+            -1.0f, -1.0f, 0.f, 0.f,
+            1.0f, -1.0f, 1.f, 0.f,
+            -1.0f, 1.0f, 0.f, 1.f,
+            1.0f, 1.0f, 1.f, 1.f,
     };
-    private static final float FULL_RECTANGLE_TEX_COORDS[] = {
-            1.0f, 1.0f,      // 3 top right
-            0.0f, 1.0f,     // 2 top left
-            1.0f, 0.0f,     // 1 bottom right
-            0.0f, 0.0f,     // 0 bottom left
 
-    };
-    private static final FloatBuffer FULL_RECTANGLE_BUF =
-            createFloatBuffer(FULL_RECTANGLE_COORDS);
-    private static final FloatBuffer FULL_RECTANGLE_TEX_BUF =
-            createFloatBuffer(FULL_RECTANGLE_TEX_COORDS);
+//    private static final float VERTICES_DATA[] = {
+//            // X, Y, U, V
+//            -1.0f, -1.0f, 0.f, 1.f,
+//            0.0f, -1.0f, 1.5f, 1.f
+//            -1.0f, 1.0f, 0.f, 0.0f,
+//            0.0f, 1.0f,  1.0f, 1.0f,
+//            1.0f, -1.0f, 1.f, 0.f,
+//            1.0f, 1.0f, 1.f, 1.f,
+//    };
+    private static final FloatBuffer VerticesBuffer =
+            createFloatBuffer(VERTICES_DATA);
+
+
+    private static int mFrameBufferObj;
+    private static int mVBO;
 
     public static final float[] IDENTITY_MATRIX;
 
@@ -109,24 +110,42 @@ public class GLUtil {
     static int texCoordStride;
     static FloatBuffer vertexArray;
     static FloatBuffer texCoordArray;
+
+    static int vertexSize;
+    static int colorPerVertex;
+
     static int sWidth = 600;
     static int sHeight = 300;
     static boolean isChanged = true;
     static public ByteBuffer mData;
+    static public boolean sShapeChanged = true;
 
     private static final int SIZEOF_FLOAT = 4;
 
     static public void initDrawable() {
+
         coordsPerVertex = 2;
-        vertexArray = FULL_RECTANGLE_BUF;
-        vertexStride = coordsPerVertex * SIZEOF_FLOAT;
-        texCoordArray = FULL_RECTANGLE_TEX_BUF;
-        texCoordStride = 2 * SIZEOF_FLOAT;
-        vertexCount = FULL_RECTANGLE_COORDS.length / coordsPerVertex;
+        colorPerVertex = 2;
+        vertexSize = coordsPerVertex + colorPerVertex; // x, y, u, v
+        vertexCount = VERTICES_DATA.length / vertexSize;
+        vertexStride = vertexSize * SIZEOF_FLOAT;
         if(GLUtil.mData != null ){
             GLUtil.mData.clear();
         }
         mData = ByteBuffer.allocateDirect(sWidth * sWidth * 4).order(ByteOrder.nativeOrder());
+        mFrameBufferObj = createFBO();
+        mVBO = createVBO();
+        loadDataVBF(mVBO);
+    }
+
+    /**
+     * 加载vbf数据到缓存中
+     * @param vbo
+     */
+    static public void loadDataVBF(int vbo) {
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo);
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, VERTICES_DATA.length * SIZEOF_FLOAT,
+                VerticesBuffer, GLES20.GL_STATIC_DRAW);
     }
     /**
      * Issues the draw call.  Does the full setup on every call.
@@ -143,14 +162,13 @@ public class GLUtil {
      * @param texBuffer       Buffer with vertex texture data.
      * @param texStride       Width, in bytes, of the texture data for each vertex.
      */
-    static void draw(int programHandle, float[] mvpMatrix, FloatBuffer vertexBuffer, int firstVertex,
-                     int vertexCount, int coordsPerVertex, int vertexStride,
-                     float[] texMatrix, FloatBuffer texBuffer, int textureId, int texStride) {
+    static void draw(int programHandle, float[] mvpMatrix,float[] texMatrix, int textureId) {
         // Select the program.
 
         GLES20.glUseProgram(programHandle);
         checkGlError("glUseProgram");
 
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO);
         // Set the texture.
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureId);
@@ -169,7 +187,7 @@ public class GLUtil {
 
             // Connect vertexBuffer to "aPosition".
         GLES20.glVertexAttribPointer(positionLocExt, coordsPerVertex,
-                GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
+                GLES20.GL_FLOAT, false, vertexCount * SIZEOF_FLOAT, 0);
         checkGlError("glVertexAttribPointer");
 
         // Enable the "aTextureCoord" vertex attribute.
@@ -177,11 +195,12 @@ public class GLUtil {
         checkGlError("glEnableVertexAttribArray");
 
         // Connect texBuffer to "aTextureCoord".
-        GLES20.glVertexAttribPointer(textureCoordLocExt, 2, GLES20.GL_FLOAT, false, texStride, texBuffer);
+        GLES20.glVertexAttribPointer(textureCoordLocExt, colorPerVertex,
+                GLES20.GL_FLOAT, false, vertexCount * SIZEOF_FLOAT, coordsPerVertex * SIZEOF_FLOAT);
         checkGlError("glVertexAttribPointer");
 
         // Draw the rect.
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, firstVertex, vertexCount);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, vertexCount);
         checkGlError("glDrawArrays");
 
         GLES20.glViewport(0, 0,
@@ -190,28 +209,29 @@ public class GLUtil {
         GLES20.glDisableVertexAttribArray(positionLocExt);
         GLES20.glDisableVertexAttribArray(textureCoordLocExt);
         GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
+        GLES20.glBindBuffer(GL_ARRAY_BUFFER, 0);
         GLES20.glUseProgram(0);
     }
 
     static void drawWithCopy( float[] mvpMatrix, FloatBuffer vertexBuffer, int firstVertex,
                      int vertexCount, int coordsPerVertex, int vertexStride,
-                     float[] texMatrix, FloatBuffer texBuffer, int textureId, int texStride, int textureIddst, int frameBufObj) {
+                     float[] texMatrix, FloatBuffer texBuffer, int textureId, int texStride, int textureIddst) {
 
         GLES20.glFinish();
 
         if (GLUtil.sIsEnhance) {
             copyEnhance(textureId, textureIddst, sWidth, sHeight);
         } else {
-            copy( VarifyRender.mProgramCopy, mvpMatrix,  vertexBuffer,  firstVertex,
-                vertexCount,  coordsPerVertex,  vertexStride,
-                texMatrix,  texBuffer,  textureId,  texStride,
-                textureIddst,  frameBufObj);
+            copy2( VarifyRender.mProgramCopy, mvpMatrix, texMatrix, textureId,
+                    textureIddst,  mFrameBufferObj);
         }
         if(sIsEnhance) {
             saveImg("/sdcard/enhanced.rgba");
         } else {
             saveImg("/sdcard/unEnhance.rgba");
         }
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO);
         GLES20.glUseProgram(VarifyRender.mProgramInner);
         checkGlError("glUseProgram");
 
@@ -230,7 +250,7 @@ public class GLUtil {
 
         // Connect vertexBuffer to "aPosition".
         GLES20.glVertexAttribPointer(positionLocIn, coordsPerVertex,
-                GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
+                GLES20.GL_FLOAT, false, vertexStride, 0);
         checkGlError("glVertexAttribPointer positionLoc");
 
         // Enable the "aTextureCoord" vertex attribute.
@@ -238,8 +258,8 @@ public class GLUtil {
         checkGlError("glEnableVertexAttribArray textureCoordLoc");
 
         // Connect texBuffer to "aTextureCoord".
-        GLES20.glVertexAttribPointer(textureCoordLocIn, 2,
-                GLES20.GL_FLOAT, false, texStride, texBuffer);
+        GLES20.glVertexAttribPointer(textureCoordLocIn, colorPerVertex,
+                GLES20.GL_FLOAT, false, vertexStride, coordsPerVertex * SIZEOF_FLOAT);
         checkGlError("glVertexAttribPointer textureCoordLoc");
         GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
 
@@ -258,6 +278,7 @@ public class GLUtil {
         GLES20.glDisableVertexAttribArray(positionLocIn);
         GLES20.glDisableVertexAttribArray(textureCoordLocIn);
         GLES20.glBindTexture(GL_TEXTURE_2D, 0);
+        GLES20.glBindBuffer(GL_ARRAY_BUFFER, 0);
         GLES20.glUseProgram(0);
         GLES20.glFinish();
         isChanged = false;
@@ -302,6 +323,13 @@ public class GLUtil {
                 Log.e(TAG, "glCheckFramebufferStatus error" + status);
             }
         }
+
+        if(sShapeChanged) {
+            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO);
+            GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, VERTICES_DATA.length * SIZEOF_FLOAT,
+                    vertexBuffer, GLES20.GL_STATIC_DRAW);
+            sShapeChanged = false;
+        }
         // Copy the model / view / projection matrix over.
         GLES20.glUseProgram(VarifyRender.mProgramExt);
         GLES20.glViewport(0, 0,
@@ -320,7 +348,7 @@ public class GLUtil {
 
         // Connect vertexBuffer to "aPosition".
         GLES20.glVertexAttribPointer(positionLocExt, coordsPerVertex,
-                GLES20.GL_FLOAT, false, vertexStride, vertexBuffer);
+                GLES20.GL_FLOAT, false, vertexStride, 0);
         checkGlError("glVertexAttribPointer positionLoc");
 
         // Enable the "aTextureCoord" vertex attribute.
@@ -328,8 +356,8 @@ public class GLUtil {
         checkGlError("glEnableVertexAttribArray textureCoordLoc");
 
         // Connect texBuffer to "aTextureCoord".
-        GLES20.glVertexAttribPointer(textureCoordLocExt, 2,
-                GLES20.GL_FLOAT, false, texStride, texBuffer);
+        GLES20.glVertexAttribPointer(textureCoordLocExt, colorPerVertex,
+                GLES20.GL_FLOAT, false, vertexStride, coordsPerVertex * SIZEOF_FLOAT);
         checkGlError("glVertexAttribPointer textureCoordLoc");
 
 
@@ -340,10 +368,90 @@ public class GLUtil {
         GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureId);
 
         // Draw the rect.
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, firstVertex, vertexCount);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
         checkGlError("glDrawArrays");
-        restoreState();
         GLES20.glFinish();
+        restoreState();
+    }
+
+    static public void copy2(int programHandle, float[] mvpMatrix, float[] texMatrix,
+                             int textureId, int textureIddst, int frameBufObj) {
+        saveGLState();
+        // Set the texture.
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GL_TEXTURE_2D, textureIddst);
+        if (isChanged) {
+            Log.d(TAG, "change dst texture:" + sWidth + "x" + sHeight);
+            GLES20.glTexImage2D(GL_TEXTURE_2D, 0, GLES20.GL_RGBA,//allocate storage
+                    sWidth, sHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
+            GLES20.glTexParameteri(GL_TEXTURE_2D,
+                    GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
+            GLES20.glTexParameteri(GL_TEXTURE_2D,
+                    GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
+            GLES20.glTexParameteri(GL_TEXTURE_2D,
+                    GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
+            GLES20.glTexParameteri(GL_TEXTURE_2D,
+                    GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        }
+
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, frameBufObj);
+        if (isChanged) {
+            GLES20.glFramebufferTexture2D(
+                    GLES20.GL_FRAMEBUFFER,
+                    GLES20.GL_COLOR_ATTACHMENT0,
+                    GL_TEXTURE_2D, textureIddst, 0);
+
+            // check status
+            int status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
+            if (status != GLES20.GL_FRAMEBUFFER_COMPLETE) {
+                Log.e(TAG, "glCheckFramebufferStatus error" + status);
+            }
+        }
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO);
+
+        // Copy the model / view / projection matrix over.
+        GLES20.glUseProgram(VarifyRender.mProgramExt);
+        GLES20.glViewport(0, 0,
+                sWidth, sHeight);
+        checkGlError("glUseProgram");
+        GLES20.glUniformMatrix4fv(mvpMatrixLocExt, 1, false, IDENTITY_MATRIX, 0);
+        checkGlError("glUniformMatrix4fv mvpMatrixLoc");
+
+        // Copy the texture transformation matrix over.
+        GLES20.glUniformMatrix4fv(texMatrixLocExt, 1, false, IDENTITY_MATRIX, 0);
+        checkGlError("glUniformMatrix4fv texMatrixLoc");
+
+        // Enable the "aPosition" vertex attribute.
+        GLES20.glEnableVertexAttribArray(positionLocExt);
+        checkGlError("glEnableVertexAttribArray positionLoc");
+
+        // Connect vertexBuffer to "aPosition".
+        GLES20.glVertexAttribPointer(positionLocExt, coordsPerVertex,
+                GLES20.GL_FLOAT, false, vertexStride, 0);
+        checkGlError("glVertexAttribPointer positionLoc");
+
+        // Enable the "aTextureCoord" vertex attribute.
+        GLES20.glEnableVertexAttribArray(textureCoordLocExt);
+        checkGlError("glEnableVertexAttribArray textureCoordLoc");
+
+        // Connect texBuffer to "aTextureCoord".
+        GLES20.glVertexAttribPointer(textureCoordLocExt, colorPerVertex,
+                GLES20.GL_FLOAT, false, vertexStride, coordsPerVertex * SIZEOF_FLOAT);
+        checkGlError("glVertexAttribPointer textureCoordLoc");
+
+
+        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
+        GLES20.glClearColor(0, 0, 0, 0);
+        // connect 'VideoTexture' to video source texture (mTextureID) in texture unit 0.
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureId);
+
+        // Draw the rect.
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+        checkGlError("glDrawArrays");
+        GLES20.glFinish();
+        restoreState();
     }
 
     static int[] glInt = new int[1];
@@ -369,7 +477,7 @@ public class GLUtil {
         GLES20.glGetIntegerv(GLES20.GL_ARRAY_BUFFER_BINDING, glInt, 0);
         previousVBO = glInt[0];
         GLES20.glGetIntegerv(GLES20.GL_VIEWPORT, previousViewport, 0);
-
+        Log.i(TAG, "save vbo id :" + previousVBO);
         checkGlError("save state");
 
         GLES20.glDisable(GLES20.GL_BLEND);
@@ -384,12 +492,13 @@ public class GLUtil {
     }
     static void restoreState() {
         // ======Restore state and cleanup.
+        Log.i(TAG, "restore vbo id :" + previousVBO);
         if (previousFBO > 0) {
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, previousFBO);
         }
-        if (previousVBO > 0) {
+//        if (previousVBO > 0) {
             GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, previousVBO);
-        }
+//        }
         GLES20.glViewport(previousViewport[0], previousViewport[1],
                 previousViewport[2], previousViewport[3]);
         if (previousBlend) GLES20.glEnable(GLES20.GL_BLEND);
@@ -467,6 +576,12 @@ public class GLUtil {
     public static int createFBO(){
         int[] glInt = new int[1];
         GLES20.glGenFramebuffers(1,glInt,0);
+        return glInt[0];
+    }
+
+    public static int createVBO() {
+        int[] glInt = new int[1];
+        GLES20.glGenBuffers(1, glInt, 0);
         return glInt[0];
     }
     public static int loadShader(int shaderType, String source) {

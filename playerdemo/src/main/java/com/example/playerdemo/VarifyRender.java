@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.Surface;
 
 import com.android.enhance.CVFactory;
-import com.android.enhance.Engine;
+import com.android.enhance.IEngine;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -26,7 +26,6 @@ public class VarifyRender implements GLSurfaceView.Renderer,
     private String TAG = this.getClass().getSimpleName();
     private int mTextureId;
     private int mTextureIdEnhance;
-    private int mFrameBufferObj;
     private SurfaceTexture mSurfaceTexture;
     private GLSurfaceView mGLSurfaceView;
     public static int mProgramExt;
@@ -38,7 +37,7 @@ public class VarifyRender implements GLSurfaceView.Renderer,
     public boolean isReady = false;
     private float[] transform = new float[16];
     private long num = 0;
-    static Engine mEnhanceEngine;
+    static IEngine mEnhanceEngine;
 
 
     public VarifyRender(Context context, GLSurfaceView glSurfaceView){
@@ -58,7 +57,6 @@ public class VarifyRender implements GLSurfaceView.Renderer,
         mTextureId = GLUtil.createExtTextureObject();
         mTextureIdEnhance = GLUtil.createInerTextureObject();
         Log.i(TAG, "mTexid :" + mTextureId + " mTidEn" +   mTextureIdEnhance);
-        mFrameBufferObj = GLUtil.createFBO();
         mSurfaceTexture = new SurfaceTexture(mTextureId);
         mSurfaceTexture.setOnFrameAvailableListener(this);
         startPreview();
@@ -103,16 +101,14 @@ public class VarifyRender implements GLSurfaceView.Renderer,
              *                        float[] texMatrix, FloatBuffer texBuffer, int textureId, int texStride) {
              */
 
-
+//
             GLUtil.drawWithCopy( GLUtil.IDENTITY_MATRIX, GLUtil.vertexArray, 0, GLUtil.vertexCount,
                     GLUtil.coordsPerVertex, GLUtil.vertexStride, this.transform, GLUtil.texCoordArray,
-                    mTextureId, GLUtil.texCoordStride, mTextureIdEnhance, mFrameBufferObj);
+                    mTextureId, GLUtil.texCoordStride, mTextureIdEnhance);
             /**
              * 播放测试
              */
-//            GLUtil.draw(mProgramExt, GLUtil.IDENTITY_MATRIX, GLUtil.vertexArray, 0, GLUtil.vertexCount,
-//                    GLUtil.coordsPerVertex, GLUtil.vertexStride, this.transform, GLUtil.texCoordArray,
-//                    mTextureId, GLUtil.texCoordStride);
+//            GLUtil.draw(mProgramExt, GLUtil.IDENTITY_MATRIX, this.transform, mTextureId);
         }
     }
 

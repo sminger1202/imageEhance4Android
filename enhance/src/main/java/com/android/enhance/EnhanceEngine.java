@@ -4,8 +4,6 @@ package com.android.enhance;
 import android.opengl.GLES20;
 import android.util.Log;
 
-import java.nio.FloatBuffer;
-
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
 import static android.opengl.GLES20.GL_TEXTURE_2D;
 
@@ -13,28 +11,16 @@ import static android.opengl.GLES20.GL_TEXTURE_2D;
  * Created by shiming on 2017/5/25.
  */
 
-class EnhanceEngine extends Engine{
+public class EnhanceEngine extends EngineBase{
     String TAG = this.getClass().getSimpleName();
     private static final int FLOAT_SIZE_BYTES = 4;
-    private static final float FULL_RECTANGLE_COORDS[] = {
-            1.0f, 1.0f,   // 3 top right
-            -1.0f, 1.0f,   // 2 top left
-            1.0f, -1.0f,   // 1 bottom right
-            -1.0f, -1.0f,   // 0 bottom left
-    };
-    private static final float FULL_RECTANGLE_TEX_COORDS[] = {
-            1.0f, 1.0f,      // 3 top right
-            0.0f, 1.0f,     // 2 top left
-            1.0f, 0.0f,     // 1 bottom right
-            0.0f, 0.0f,     // 0 bottom left
-    };
 
     private float[] mTriangleVerticesData = {
             // X, Y, U, V
-            -1.0f, -1.0f, 0.f, 1.f,
-            1.0f, -1.0f, 1.f, 1.f,
-            -1.0f, 1.0f, 0.f, 0.f,
-            1.0f, 1.0f, 1.f, 0.f,
+            -1.0f, -1.0f, 0.f, 0.f,
+            1.0f, -1.0f, 1.f, 0.f,
+            -1.0f, 1.0f, 0.f, 1.f,
+            1.0f, 1.0f, 1.f, 1.f,
     };
 
     private float mvpMatrix[] = {
@@ -49,34 +35,29 @@ class EnhanceEngine extends Engine{
             0.f, 0.f, 1.f, 0.f,
             0.f, 0.f, 0.f, 1.f,
     };
-    private static final FloatBuffer FULL_RECTANGLE_BUF =
-            createFloatBuffer(FULL_RECTANGLE_COORDS);
-    private static final FloatBuffer FULL_RECTANGLE_TEX_BUF =
-            createFloatBuffer(FULL_RECTANGLE_TEX_COORDS);
 
-    private boolean mTriangleVerticesDirty = true;
     private java.nio.FloatBuffer mTriangleVertices;
 
-    int vertexCount;
-    int coordsPerVertex;
-    int vertexStride;
-    int texCoordStride;
-    FloatBuffer vertexArray;
-    FloatBuffer texCoordArray;
+    private int coordsPerVertex;
+    private int colorPerVertex;
+    private int vertexSize;
+    private int vertexCount;
+    private int vertexStride;
 
 
-    int dxLoc;
-    int dyLoc;
-    int mvpMatrixLocEhn;
-    int texMatrixLocEhn;
-    int positionLocEhn;
-    int textureCoordLocEhn;
+    private int dxLoc;
+    private int dyLoc;
+    private int mvpMatrixLocEhn;
+    private int texMatrixLocEhn;
+    private int positionLocEhn;
+    private int textureCoordLocEhn;
+    private int mFBO;
+    private int mVBO;
 
-    int mFrameBufferObj;
-    private int mBlitBuffer;
-
-    private int mWidht;
-    private int mHeight;
+    private int mWidht = 0;
+    private int mHeight = 0;
+    private float dx = 0.f;
+    private float dy = 0.f;
 
 
     int[] glInt = new int[1];
@@ -97,20 +78,10 @@ class EnhanceEngine extends Engine{
     public void init() {
         super.init();
         coordsPerVertex = 2;
-        vertexArray = FULL_RECTANGLE_BUF;
-        vertexStride = coordsPerVertex * SIZEOF_FLOAT;
-        texCoordArray = FULL_RECTANGLE_TEX_BUF;
-        texCoordStride = 2 * SIZEOF_FLOAT;
-        vertexCount = FULL_RECTANGLE_COORDS.length / coordsPerVertex;
-
-        GLES20.glGenBuffers(1,glInt,0);
-        mBlitBuffer = glInt[0];
-
-        // Create blit mesh.
-        mTriangleVertices = java.nio.ByteBuffer.allocateDirect(
-                mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
-                .order(java.nio.ByteOrder.nativeOrder()).asFloatBuffer();
-        mTriangleVerticesDirty = true;
+        colorPerVertex = 2;
+        vertexSize = coordsPerVertex + colorPerVertex; // x, y, u, v
+        vertexCount = mTriangleVerticesData.length / vertexSize;
+        vertexStride = vertexSize * SIZEOF_FLOAT;
     }
 
     @Override
@@ -138,7 +109,27 @@ class EnhanceEngine extends Engine{
     public void initFBO() {
         int[] glInt = new int[1];
         GLES20.glGenFramebuffers(1,glInt,0);
-        mFrameBufferObj = glInt[0];
+        mFBO = glInt[0];
+    }
+
+    @Override
+    protected void initVBO() {
+        int[] glInt = new int[1];
+        GLES20.glGenBuffers(1, glInt, 0);
+        mVBO = glInt[0];
+        mTriangleVertices = java.nio.ByteBuffer.allocateDirect(
+                mTriangleVerticesData.length * FLOAT_SIZE_BYTES)
+                .order(java.nio.ByteOrder.nativeOrder()).asFloatBuffer();
+        mTriangleVertices.position(0);
+        mTriangleVertices.put(mTriangleVerticesData).position(0);
+
+        GLES20.glGetIntegerv(GLES20.GL_ARRAY_BUFFER_BINDING, glInt, 0);
+        int previousVBO = glInt[0];
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO);
+        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER,
+                mTriangleVerticesData.length*FLOAT_SIZE_BYTES,
+                mTriangleVertices, GLES20.GL_STATIC_DRAW);
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, previousVBO);
     }
 
     @Override
@@ -149,6 +140,8 @@ class EnhanceEngine extends Engine{
         } else {
             mWidht = width;
             mHeight = height;
+            dx = 1.f / mWidht;
+            dy = 1.f / mHeight;
             isChanged = true;
         }
         saveGLState();
@@ -158,17 +151,10 @@ class EnhanceEngine extends Engine{
             Log.d(TAG, "change dst texture:" + mWidht + "x" + mHeight);
             GLES20.glTexImage2D(GL_TEXTURE_2D, 0, GLES20.GL_RGBA,//allocate storage
                     mWidht, mHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
-            GLES20.glTexParameteri(GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-            GLES20.glTexParameteri(GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-            GLES20.glTexParameteri(GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-            GLES20.glTexParameteri(GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+            initTexParams();
         }
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFrameBufferObj);
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, mFBO);
         if (isChanged) {
             GLES20.glFramebufferTexture2D(
                     GLES20.GL_FRAMEBUFFER,
@@ -181,28 +167,26 @@ class EnhanceEngine extends Engine{
                 Log.e(TAG, "glCheckFramebufferStatus error" + status);
             }
         }
-        // Copy the model / view / projection matrix over.
+
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO);
+
         GLES20.glUseProgram(mProgram);
         GLES20.glViewport(0, 0,
                 mWidht, mHeight);
         checkGlError("glUseProgram");
+
         GLES20.glUniformMatrix4fv(mvpMatrixLocEhn, 1, false, mvpMatrix, 0);
         checkGlError("glUniformMatrix4fv mvpMatrixLoc");
 
-        // Copy the texture transformation matrix over.
         GLES20.glUniformMatrix4fv(texMatrixLocEhn, 1, false, texMatrix, 0);
         checkGlError("glUniformMatrix4fv texMatrixLoc");
 
         //dx,dy
-        GLES20.glUniform1f(dxLoc, 1.f / mWidht);
+        GLES20.glUniform1f(dxLoc, dx);
         checkGlError("dxloc");
 
-        GLES20.glUniform1f(dyLoc, 1.f / mHeight);
+        GLES20.glUniform1f(dyLoc, dy);
         checkGlError("dyloc");
-
-
-        UpdateVertexData();
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mBlitBuffer);
 
         // Enable the "aPosition" vertex attribute.
         GLES20.glEnableVertexAttribArray(positionLocEhn);
@@ -210,7 +194,7 @@ class EnhanceEngine extends Engine{
 
         // Connect vertexBuffer to "aPosition".
         GLES20.glVertexAttribPointer(positionLocEhn, coordsPerVertex,
-                GLES20.GL_FLOAT, false, 4 * FLOAT_SIZE_BYTES, 0);
+                GLES20.GL_FLOAT, false, vertexStride, 0);
         checkGlError("glVertexAttribPointer positionLoc");
 
         // Enable the "aTextureCoord" vertex attribute.
@@ -218,49 +202,20 @@ class EnhanceEngine extends Engine{
         checkGlError("glEnableVertexAttribArray textureCoordLoc");
 
         // Connect texBuffer to "aTextureCoord".
-        GLES20.glVertexAttribPointer(textureCoordLocEhn, 2,
-                GLES20.GL_FLOAT, false, 4 * FLOAT_SIZE_BYTES, 2 * FLOAT_SIZE_BYTES);
+        GLES20.glVertexAttribPointer(textureCoordLocEhn, colorPerVertex,
+                GLES20.GL_FLOAT, false, vertexStride, coordsPerVertex * FLOAT_SIZE_BYTES);
         checkGlError("glVertexAttribPointer textureCoordLoc");
 
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
         GLES20.glClearColor(0, 0, 0, 0);
-        // connect 'VideoTexture' to video source texture (mTextureID) in texture unit 0.
+        // connect 'VideoTexture' to video source texture (srcTextureId) in texture unit 0.
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, srcTextureId);
 
         // Draw the rect.
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, vertexCount);
         checkGlError("glDrawArrays");
         restoreState();
-    }
-
-    private void UpdateVertexData()
-    {
-        if (!mTriangleVerticesDirty || mBlitBuffer <= 0)
-        {
-            return;
-        }
-        // fill it in
-        mTriangleVertices.position(0);
-        mTriangleVertices.put(mTriangleVerticesData).position(0);
-
-        // save VBO state
-        int[] glInt = new int[1];
-        GLES20.glGetIntegerv(GLES20.GL_ARRAY_BUFFER_BINDING, glInt, 0);
-        int previousVBO = glInt[0];
-
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mBlitBuffer);
-        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER,
-                mTriangleVerticesData.length*FLOAT_SIZE_BYTES,
-                mTriangleVertices, GLES20.GL_STATIC_DRAW);
-
-        // restore VBO state
-//        if (previousVBO > 0)
-//        {
-//            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, previousVBO);
-//        }
-
-        mTriangleVerticesDirty = false;
     }
 
     void saveGLState() {
@@ -291,12 +246,9 @@ class EnhanceEngine extends Engine{
     }
     void restoreState() {
         // ======Restore state and cleanup.
-        if (previousFBO > 0) {
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, previousFBO);
-        }
-        if (previousVBO > 0) {
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, previousVBO);
-        }
+
+        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, previousFBO);
+        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, previousVBO);
         GLES20.glViewport(previousViewport[0], previousViewport[1],
                 previousViewport[2], previousViewport[3]);
         if (previousBlend) GLES20.glEnable(GLES20.GL_BLEND);
@@ -309,7 +261,6 @@ class EnhanceEngine extends Engine{
 
     @Override
     protected String getVertexSource() {
-
         return getVertexShader();
     }
     @Override
