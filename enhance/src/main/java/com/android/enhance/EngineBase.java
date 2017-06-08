@@ -126,8 +126,6 @@ public abstract class EngineBase implements IEngine{
         GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
                 GLES20.GL_CLAMP_TO_EDGE);
     }
-
-    public void release() {
-
-    }
+    @Override
+    public abstract void release();
 }

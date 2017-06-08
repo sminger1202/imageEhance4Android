@@ -2,6 +2,7 @@ package com.android.enhance;
 
 
 import android.opengl.GLES20;
+import android.os.Build;
 import android.util.Log;
 
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
@@ -17,10 +18,10 @@ public class EnhanceEngine extends EngineBase{
 
     private float[] mTriangleVerticesData = {
             // X, Y, U, V
-            -1.0f, -1.0f, 0.f, 0.f,
-            1.0f, -1.0f, 1.f, 0.f,
-            -1.0f, 1.0f, 0.f, 1.f,
-            1.0f, 1.0f, 1.f, 1.f,
+            -1.0f, -1.0f, 0.f, 1.f,
+            1.0f, -1.0f, 1.f, 1.f,
+            -1.0f, 1.0f, 0.f, 0.f,
+            1.0f, 1.0f, 1.f, 0.f,
     };
 
     private float mvpMatrix[] = {
@@ -266,6 +267,26 @@ public class EnhanceEngine extends EngineBase{
     @Override
     protected String getfragmentSource() {
         return getFragmentShader();
+    }
+
+    @Override
+    public void release() {
+        if (mFBO > 0){
+            int[] dd = new int[1];
+            dd[0] = mFBO;
+            GLES20.glDeleteFramebuffers(1,dd, 0 );
+            mFBO = -1;
+        }
+        if (mVBO > 0) {
+            int[] dd = new int[1];
+            dd[0] = mVBO;
+            GLES20.glDeleteBuffers(1,dd, 0 );
+            mVBO = -1;
+        }
+        if (mProgram > 0){
+            GLES20.glDeleteProgram(mProgram);
+            mProgram = -1;
+        }
     }
 
     public static native String getVertexShader();

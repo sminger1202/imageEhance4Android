@@ -7,4 +7,5 @@ package com.android.enhance;
 public interface IEngine {
     void setParameter(String field , float value);
     void apply(int srcTextureId, int dstTextureId, int width, int height);
+    void release();
 }
