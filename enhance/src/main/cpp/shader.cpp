@@ -27,16 +27,17 @@ getFragmentShader( JNIEnv* env, jobject thiz ) {
                              "uniform samplerExternalOES sTexture;\n"
                              "uniform float dx;\n"
                              "uniform float dy;\n"
+                             "uniform float coef;\n"
                              "vec4 getPixel(float dx, float dy)  \n"
                              "    { return texture2D(sTexture, vTextureCoord + vec2(dx, dy));}\n"
                              "void main() {\n"
-                             "    vec4 five = vec4(5, 5, 5, 5);\n"
                              "    vec4 left = getPixel(-dx, 0.0);\n"
                              "    vec4 right = getPixel(+dx, 0.0);\n"
                              "    vec4 top = getPixel(0.0, -dy);\n"
                              "    vec4 down = getPixel(0.0, dy);\n"
                              "    vec4 center = getPixel(0.0, 0.0);\n"
-                             "    gl_FragColor = clamp(five * center - left - right - top - down, 0.0, 1.0);\n"
+                             "    vec4 effect = coef * (4.0 * center - left - right - top - down);\n"
+                             "    gl_FragColor = clamp(center + effect, 0.0, 1.0);\n"
                              "}\n" );
 }
 static JNINativeMethod gMethods[] = {

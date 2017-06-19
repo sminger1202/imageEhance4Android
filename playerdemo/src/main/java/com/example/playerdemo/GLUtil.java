@@ -51,13 +51,22 @@ public class GLUtil {
                     "    gl_FragColor = texture2D(sTexture, vTextureCoord);\n" +
                     "}\n";
 
+//    private static final float VERTICES_DATA[] = {
+//            // X, Y, U, V
+//            -1.0f, -1.0f, 0.f, 0.f,
+//            1.0f, -1.0f, 1.f, 0.f,
+//            -1.0f, 1.0f, 0.f, 1.f,
+//            1.0f, 1.0f, 1.f, 1.f,
+//    };
+
     private static final float VERTICES_DATA[] = {
             // X, Y, U, V
-            -1.0f, -1.0f, 0.f, 0.f,
-            1.0f, -1.0f, 1.f, 0.f,
-            -1.0f, 1.0f, 0.f, 1.f,
-            1.0f, 1.0f, 1.f, 1.f,
+            -1.0f, -1.0f, 0.f, 1.f,
+            1.0f, -1.0f, 1.f, 1.f,
+            -1.0f, 1.0f, 0.f, 0.f,
+            1.0f, 1.0f, 1.f, 0.f,
     };
+
 
 //    private static final float VERTICES_DATA[] = {
 //            // X, Y, U, V

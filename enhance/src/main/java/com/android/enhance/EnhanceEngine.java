@@ -48,6 +48,7 @@ public class EnhanceEngine extends EngineBase{
 
     private int dxLoc;
     private int dyLoc;
+    private int coefLoc;
     private int mvpMatrixLocEhn;
     private int texMatrixLocEhn;
     private int positionLocEhn;
@@ -59,6 +60,7 @@ public class EnhanceEngine extends EngineBase{
     private int mHeight = 0;
     private float dx = 0.f;
     private float dy = 0.f;
+    private float coef = 1.f;
 
 
     int[] glInt = new int[1];
@@ -99,11 +101,16 @@ public class EnhanceEngine extends EngineBase{
         checkLocation(dxLoc, "dx Ehn");
         dyLoc = GLES20.glGetUniformLocation(mProgram, "dy");
         checkLocation(dyLoc, "dy Ehn");
+        coefLoc = GLES20.glGetUniformLocation(mProgram, "coef");
+        checkLocation(coefLoc, "coefficient");
+
     }
 
     @Override
-    public void setParameter(String field, float value) {
-
+    public void setParameter(int field, float value) {
+        if (field == IEngine.EFFECT_COEFFICIENT) {
+            coef = value;
+        }
     }
 
     @Override
@@ -189,6 +196,8 @@ public class EnhanceEngine extends EngineBase{
         GLES20.glUniform1f(dyLoc, dy);
         checkGlError("dyloc");
 
+        GLES20.glUniform1f(coefLoc, coef);
+        checkGlError("effect coefficient");
         // Enable the "aPosition" vertex attribute.
         GLES20.glEnableVertexAttribArray(positionLocEhn);
         checkGlError("glEnableVertexAttribArray positionLoc");
