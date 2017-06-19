@@ -160,7 +160,6 @@ public class VideoPreviewView extends GLSurfaceView
         if (devRatio > mpRatio) {
             GLUtil.sWidth = size.x;
             GLUtil.sHeight = ( int )(size.x * mpRatio);
-
         } else {
             GLUtil.sHeight = size.y;
             GLUtil.sWidth = (int )(size.y / mpRatio);

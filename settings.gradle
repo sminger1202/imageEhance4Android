@@ -1,1 +1,1 @@
-include ':app', ':enhance', ':playerdemo'
+include ':app', ':enhance', ':playerdemo', ':previewcamera'
