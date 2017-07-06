@@ -52,6 +52,7 @@ public abstract class EngineBase implements IEngine{
     protected int mVBO;
     protected int mWidth = 0;
     protected int mHeight = 0;
+    protected int mChannels = 0;
 
     protected int coordsPerVertex;
     protected int colorPerVertex;
@@ -190,6 +191,7 @@ public abstract class EngineBase implements IEngine{
                 GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
         GLES20.glTexParameteri(GL_TEXTURE_2D,
                 GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        GLES20.glBindTexture(GL_TEXTURE_2D, 0);
         return texId;
     }
 

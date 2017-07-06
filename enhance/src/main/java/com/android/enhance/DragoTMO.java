@@ -27,6 +27,7 @@ public class DragoTMO extends EngineBase {
     private float[] mMaxMin;
     private IEngine mLuminance;
     private IEngine mDrago;
+    private ReduxEngine mRedux;
     private int mLumTextureId;
     float[] floatData;
     FloatBuffer floatBuffer;
@@ -40,6 +41,7 @@ public class DragoTMO extends EngineBase {
         mContext   = context;
         mLuminance = CVFactory.getEngineInstance(mContext, CVFactory.LUMINANCE);
         mDrago     = CVFactory.getEngineInstance(mContext, CVFactory.DRAGO);
+        mRedux     = (ReduxEngine) CVFactory.getEngineInstance(mContext, CVFactory.REDUX);
         mLumTextureId = createInnerTextureObject();
         mMaxMin = new float[2];
     }
@@ -139,7 +141,11 @@ public class DragoTMO extends EngineBase {
         Log.d(TAG, "MaxMinValue max, min :" + Max + "," + Min + "," + value[0]+ "," + value[1]);
         restoreState();
     }
-
+    private void getMaxMinGL(int textureID, float[] value) {
+        float[] tmp = mRedux.getMinValue(textureID, mWidth, mHeight, 4);
+        value[0] = tmp[3];
+        value[1] = tmp[3];
+    }
     @Override
     public void apply(int srcTextureId, int dstTextureId, int width, int height) {
         if (mWidth != width || mHeight != height) {
@@ -153,7 +159,8 @@ public class DragoTMO extends EngineBase {
             floatData = new float[mWidth * mHeight * 4];
         }
         mLuminance.apply(srcTextureId, mLumTextureId, width, height);
-        getMaxMin(mLumTextureId, mMaxMin);
+//        getMaxMin(mLumTextureId, mMaxMin);
+        getMaxMinGL(mLumTextureId, mMaxMin);
         int[] InputTextures = {srcTextureId, mLumTextureId};
         updata(mLdMax, mBias, mMaxMin[0], mMaxMin[0] ) ;
         float[] pars = { constant1, constant2, Lw_Max_scaled, Lw_a_scaled};

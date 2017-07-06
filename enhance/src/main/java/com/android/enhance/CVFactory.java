@@ -13,7 +13,8 @@ public class CVFactory {
     public static String LUMINANCE = "luminance";
     public static String DRAGO = "drago";
     public static String DRAGOTMO = "dragoTMO";
-    public static String[] engineList= {ENHANCE, LUMINANCE, DRAGO, DRAGOTMO};
+    public static String REDUX = "redux";
+    public static String[] engineList= {ENHANCE, LUMINANCE, DRAGO, DRAGOTMO, REDUX};
     public static IEngine mEngine;
     public static Map<String, IEngine> EngineMap= new TreeMap<String, IEngine>();
     public static synchronized IEngine getEngineInstance(Context context, String EngineType) {
@@ -36,6 +37,10 @@ public class CVFactory {
                 if (EngineType == DRAGOTMO) {
                     mEngine = new DragoTMO(context);
                     EngineMap.put(DRAGOTMO, mEngine);
+                }
+                if (EngineType == REDUX) {
+                    mEngine = new ReduxEngine(context);
+                    EngineMap.put(REDUX, mEngine);
                 }
             }
         } catch (Exception e) {
