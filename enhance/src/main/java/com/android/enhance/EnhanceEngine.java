@@ -1,8 +1,8 @@
 package com.android.enhance;
 
 
+import android.content.Context;
 import android.opengl.GLES20;
-import android.os.Build;
 import android.util.Log;
 
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
@@ -14,37 +14,6 @@ import static android.opengl.GLES20.GL_TEXTURE_2D;
 
 public class EnhanceEngine extends EngineBase{
     String TAG = this.getClass().getSimpleName();
-    private static final int FLOAT_SIZE_BYTES = 4;
-
-    private float[] mTriangleVerticesData = {
-            // X, Y, U, V
-            -1.0f, -1.0f, 0.f, 1.f,
-            1.0f, -1.0f, 1.f, 1.f,
-            -1.0f, 1.0f, 0.f, 0.f,
-            1.0f, 1.0f, 1.f, 0.f,
-    };
-
-    private float mvpMatrix[] = {
-            1.0f, 0.f, 0.f, 0.f,
-            0.f, 1.f, 0.f, 0.f,
-            0.f, 0.f, 1.f, 0.f,
-            0.f, 0.f, 0.f, 1.f,
-    };
-    private float texMatrix[] = {
-            1.0f, 0.f, 0.f, 0.f,
-            0.f, 1.f, 0.f, 0.f,
-            0.f, 0.f, 1.f, 0.f,
-            0.f, 0.f, 0.f, 1.f,
-    };
-
-    private java.nio.FloatBuffer mTriangleVertices;
-
-    private int coordsPerVertex;
-    private int colorPerVertex;
-    private int vertexSize;
-    private int vertexCount;
-    private int vertexStride;
-
 
     private int dxLoc;
     private int dyLoc;
@@ -53,38 +22,22 @@ public class EnhanceEngine extends EngineBase{
     private int texMatrixLocEhn;
     private int positionLocEhn;
     private int textureCoordLocEhn;
-    private int mFBO;
-    private int mVBO;
 
-    private int mWidht = 0;
-    private int mHeight = 0;
     private float dx = 0.f;
     private float dy = 0.f;
     private float coef = 1.f;
 
-
-    int[] glInt = new int[1];
-    boolean previousBlend;
-    boolean previousCullFace;
-    boolean previousScissorTest;
-    boolean previousStencilTest;
-    boolean previousDepthTest;
-    boolean previousDither;
-    int previousFBO;
-    int previousVBO;
-    int[] previousViewport = new int[4];
-
-    public EnhanceEngine(){
-        init();
+    public EnhanceEngine(Context context){
+        init(context);
     }
     @Override
-    public void init() {
-        super.init();
+    public void init(Context context) {
+        super.init(context);
         coordsPerVertex = 2;
         colorPerVertex = 2;
         vertexSize = coordsPerVertex + colorPerVertex; // x, y, u, v
         vertexCount = mTriangleVerticesData.length / vertexSize;
-        vertexStride = vertexSize * SIZEOF_FLOAT;
+        vertexStride = vertexSize * FLOAT_SIZE_BYTES;
     }
 
     @Override
@@ -111,6 +64,11 @@ public class EnhanceEngine extends EngineBase{
         if (field == IEngine.EFFECT_COEFFICIENT) {
             coef = value;
         }
+    }
+
+    @Override
+    public void setParameters(int field, float[] value) {
+
     }
 
     @Override
@@ -142,13 +100,14 @@ public class EnhanceEngine extends EngineBase{
 
     @Override
     public void apply(final int srcTextureId, final int dstTextureId, final int width,final int height) {
+        Log.i(TAG, "Enhance apply");
         boolean isChanged = true;
-        if (mWidht == width && mHeight == height) {
+        if (mWidth == width && mHeight == height) {
             isChanged = false;
         } else {
-            mWidht = width;
+            mWidth = width;
             mHeight = height;
-            dx = 1.f / mWidht;
+            dx = 1.f / mWidth;
             dy = 1.f / mHeight;
             isChanged = true;
         }
@@ -156,9 +115,9 @@ public class EnhanceEngine extends EngineBase{
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GL_TEXTURE_2D, dstTextureId);
         if (isChanged) {
-            Log.d(TAG, "change dst texture:" + mWidht + "x" + mHeight);
+            Log.d(TAG, "change dst texture:" + mWidth + "x" + mHeight);
             GLES20.glTexImage2D(GL_TEXTURE_2D, 0, GLES20.GL_RGBA,//allocate storage
-                    mWidht, mHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
+                    mWidth, mHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
             initTexParams();
         }
 
@@ -180,7 +139,7 @@ public class EnhanceEngine extends EngineBase{
 
         GLES20.glUseProgram(mProgram);
         GLES20.glViewport(0, 0,
-                mWidht, mHeight);
+                mWidth, mHeight);
         checkGlError("glUseProgram");
 
         GLES20.glUniformMatrix4fv(mvpMatrixLocEhn, 1, false, mvpMatrix, 0);
@@ -198,6 +157,7 @@ public class EnhanceEngine extends EngineBase{
 
         GLES20.glUniform1f(coefLoc, coef);
         checkGlError("effect coefficient");
+
         // Enable the "aPosition" vertex attribute.
         GLES20.glEnableVertexAttribArray(positionLocEhn);
         checkGlError("glEnableVertexAttribArray positionLoc");
@@ -228,45 +188,9 @@ public class EnhanceEngine extends EngineBase{
         restoreState();
     }
 
-    void saveGLState() {
+    @Override
+    public void apply(int[] srcTextureId, int dstTextureId, int width, int height) {
 
-        previousBlend = GLES20.glIsEnabled(GLES20.GL_BLEND);
-        previousCullFace = GLES20.glIsEnabled(GLES20.GL_CULL_FACE);
-        previousScissorTest = GLES20.glIsEnabled(GLES20.GL_SCISSOR_TEST);
-        previousStencilTest = GLES20.glIsEnabled(GLES20.GL_STENCIL_TEST);
-        previousDepthTest = GLES20.glIsEnabled(GLES20.GL_DEPTH_TEST);
-        previousDither = GLES20.glIsEnabled(GLES20.GL_DITHER);
-        GLES20.glGetIntegerv(GLES20.GL_FRAMEBUFFER_BINDING, glInt, 0);
-        previousFBO = glInt[0];
-        GLES20.glGetIntegerv(GLES20.GL_ARRAY_BUFFER_BINDING, glInt, 0);
-        previousVBO = glInt[0];
-        GLES20.glGetIntegerv(GLES20.GL_VIEWPORT, previousViewport, 0);
-
-        checkGlError("save state");
-
-        GLES20.glDisable(GLES20.GL_BLEND);
-        GLES20.glDisable(GLES20.GL_CULL_FACE);
-        GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
-        GLES20.glDisable(GLES20.GL_STENCIL_TEST);
-        GLES20.glDisable(GLES20.GL_DEPTH_TEST);
-        GLES20.glDisable(GLES20.GL_DITHER);
-        GLES20.glColorMask(true, true, true, true);
-
-        checkGlError("reset state");
-    }
-    void restoreState() {
-        // ======Restore state and cleanup.
-
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, previousFBO);
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, previousVBO);
-        GLES20.glViewport(previousViewport[0], previousViewport[1],
-                previousViewport[2], previousViewport[3]);
-        if (previousBlend) GLES20.glEnable(GLES20.GL_BLEND);
-        if (previousCullFace) GLES20.glEnable(GLES20.GL_CULL_FACE);
-        if (previousScissorTest) GLES20.glEnable(GLES20.GL_SCISSOR_TEST);
-        if (previousStencilTest) GLES20.glEnable(GLES20.GL_STENCIL_TEST);
-        if (previousDepthTest) GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        if (previousDither) GLES20.glEnable(GLES20.GL_DITHER);
     }
 
     @Override

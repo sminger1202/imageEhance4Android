@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.opengl.GLUtils;
+import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.Switch;
 
 import static com.example.playerdemo.GLUtil.sIsOpenClPrepared;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private Button CLButton;
     private Button copyButton;
     private Switch enhanceSwitch;
+    private SeekBar mSeekBar;
     public Context mContxt;
     final float GRAY = 0.3f;
     final float BLACK = 1.f;
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Debug.startMethodTracing("/sdcard/traceMethod");
         setContentView(R.layout.activity_main);
         mContxt = this;
         enhanceSwitch = (Switch) findViewById(R.id.modeToggle);
@@ -46,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
                 GLUtil.sIsEnhance = ! GLUtil.sIsEnhance;
                 GLUtil.isChanged = true;
                 if(GLUtil.sIsEnhance) {
-
+                    Debug.startMethodTracing("/sdcard/traceMethod");
                 } else {
-
+                    Debug.stopMethodTracing();
                 }
                 Log.d(TAG, "toggle Enchance" + GLUtil.sIsEnhance );
             }
@@ -120,6 +124,24 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        mSeekBar = (SeekBar) findViewById(R.id.progressbar);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.d(TAG, "progress :" + progress);
+                mPreviewView.seekTo(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     public void resetState() {
@@ -145,6 +167,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         Log.d(TAG, "onResume");
         mPreviewView.onResume();
+
     }
 
     @Override

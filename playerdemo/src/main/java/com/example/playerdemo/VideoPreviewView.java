@@ -24,6 +24,7 @@ public class VideoPreviewView extends GLSurfaceView
     private MediaPlayer mMediaPlayer;
     private VarifyRender mVarifyRender;
     private boolean isMediaPlayerReady;
+    private long mDurationTime;
     private boolean mMediaControllerAttached = false;
 
     public VideoPreviewView(Context context, AttributeSet attrs) {
@@ -79,6 +80,7 @@ public class VideoPreviewView extends GLSurfaceView
     @Override
     public void seekTo(int pos) {
 
+        mMediaPlayer.seekTo((int)mDurationTime * pos / 100);
     }
 
     @Override
@@ -170,6 +172,7 @@ public class VideoPreviewView extends GLSurfaceView
         mp.start();
         isMediaPlayerReady = true;
 
+        mDurationTime = mMediaPlayer.getDuration();
         Log.d(TAG, "onPrepared  dev" + size.x +"x"+ size.y);
         Log.d(TAG, "onPrepared  mp" + mp.getVideoWidth() +"x"+ mp.getVideoHeight());
         Log.d(TAG, "onPrepared  final" + GLUtil.sWidth +"x"+ GLUtil.sHeight);

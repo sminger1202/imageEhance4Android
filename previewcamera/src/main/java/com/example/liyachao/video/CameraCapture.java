@@ -182,19 +182,29 @@ public class CameraCapture {
             mCamera.setPreviewCallback(new Camera.PreviewCallback() {
                 @Override
                 public void onPreviewFrame(byte[] data, Camera camera) {
-                    int a = data[2010400];
-                    Log.e("data size:", data.length + "");
+//                    int a = data[2010400];
+                    for (int i = 1080 * 10; i <1080 * 15; i++) {
+                        data[i] = 127;
+                    }
+                    Log.e("data_size si:", data.length + "");
+                }
+            });
+            mCamera.setFaceDetectionListener(new Camera.FaceDetectionListener() {
+                @Override
+                public void onFaceDetection(Camera.Face[] faces, Camera camera) {
+//                    if (faces.length != 0)
+                    Log.e("data_size:face",   faces[0].rect.width() +":"+ faces[0].rect.height());
                 }
             });
             mParams.setPreviewFormat(NV21);
             //mParams.setPictureSize(200, 200);
            // mParams.setPreviewSize(1920, 1080);
-            mCamera.setPreviewCallbackWithBuffer(new Camera.PreviewCallback() {
-                @Override
-                public void onPreviewFrame(byte[] data, Camera camera) {
-
-                }
-            });
+//            mCamera.setPreviewCallbackWithBuffer(new Camera.PreviewCallback() {
+//                @Override
+//                public void onPreviewFrame(byte[] data, Camera camera) {
+//                    Log.i("data_size", "ssssssssss");
+//                }
+//            });
             mCamera.setParameters(mParams);
             mCamera.startPreview();//开启预览
             isPreviewing = true;

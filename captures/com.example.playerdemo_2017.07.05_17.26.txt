@@ -1,0 +1,75 @@
+Activity Resolver Table:
+  Non-Data Actions:
+      android.intent.action.MAIN:
+        328689 com.example.playerdemo/.MainActivity filter 4e2e9d6
+          Action: "android.intent.action.MAIN"
+          Category: "android.intent.category.LAUNCHER"
+          AutoVerify=false
+
+Registered ContentProviders:
+  com.example.playerdemo/com.android.tools.fd.runtime.InstantRunContentProvider:
+    Provider{177368e com.example.playerdemo/com.android.tools.fd.runtime.InstantRunContentProvider}
+
+ContentProvider Authorities:
+  [com.example.playerdemo.com.android.tools.fd.runtime.InstantRunContentProvider]:
+    Provider{177368e com.example.playerdemo/com.android.tools.fd.runtime.InstantRunContentProvider}
+      applicationInfo=ApplicationInfo{235aeaf com.example.playerdemo}
+
+Key Set Manager:
+  [com.example.playerdemo]
+      Signing KeySets: 225
+
+Packages:
+  Package [com.example.playerdemo] (65066b6):
+    userId=10472
+    pkg=Package{66ee2bc com.example.playerdemo}
+    codePath=/data/app/com.example.playerdemo-1
+    resourcePath=/data/app/com.example.playerdemo-1
+    legacyNativeLibraryDir=/data/app/com.example.playerdemo-1/lib
+    primaryCpuAbi=armeabi-v7a
+    secondaryCpuAbi=null
+    versionCode=1 minSdk=16 targetSdk=25
+    versionName=1.0
+    splits=[base, lib_dependencies_apk, lib_slice_0_apk, lib_slice_1_apk, lib_slice_2_apk, lib_slice_3_apk, lib_slice_4_apk, lib_slice_5_apk, lib_slice_6_apk, lib_slice_7_apk, lib_slice_8_apk, lib_slice_9_apk]
+    apkSigningVersion=2
+    applicationInfo=ApplicationInfo{235aeaf com.example.playerdemo}
+    flags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
+    privateFlags=[ RESIZEABLE_ACTIVITIES ]
+    dataDir=/data/user/0/com.example.playerdemo
+    supportsScreens=[small, medium, large, xlarge, resizeable, anyDensity]
+    timeStamp=2017-07-05 17:23:40
+    firstInstallTime=2017-07-04 16:04:52
+    lastUpdateTime=2017-07-05 17:23:40
+    signatures=PackageSignatures{3cbb324 [b63dffdb]}
+    installPermissionsFixed=true installStatus=1
+    pkgFlags=[ DEBUGGABLE HAS_CODE ALLOW_CLEAR_USER_DATA ALLOW_BACKUP ]
+    requested permissions:
+      android.permission.INTERNET
+      android.permission.READ_EXTERNAL_STORAGE
+      android.permission.WRITE_EXTERNAL_STORAGE
+      android.permission.ACCESS_WIFI_STATE
+      android.permission.ACCESS_NETWORK_STATE
+      android.permission.WRITE_SETTINGS
+      android.permission.REAL_GET_TASKS
+    install permissions:
+      android.permission.INTERNET: granted=true
+      android.permission.ACCESS_NETWORK_STATE: granted=true
+      android.permission.ACCESS_WIFI_STATE: granted=true
+    User 0: ceDataInode=901462 installed=true hidden=false suspended=false stopped=false notLaunched=false enabled=0
+      gids=[3003]
+      runtime permissions:
+        android.permission.READ_EXTERNAL_STORAGE: granted=true
+        android.permission.WRITE_EXTERNAL_STORAGE: granted=true
+
+
+Dexopt state:
+  [com.example.playerdemo]
+    Instruction Set: arm
+      path: /data/app/com.example.playerdemo-1/base.apk
+      status: /data/app/com.example.playerdemo-1/oat/arm/base.odex [compilation_filter=interpret-only, status=kOatUpToDa
+      te]
+
+
+Compiler stats:
+  [com.example.playerdemo]
+     base.apk - 234

@@ -4,6 +4,10 @@ import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,21 +55,21 @@ public class GLUtil {
                     "    gl_FragColor = texture2D(sTexture, vTextureCoord);\n" +
                     "}\n";
 
-//    private static final float VERTICES_DATA[] = {
-//            // X, Y, U, V
-//            -1.0f, -1.0f, 0.f, 0.f,
-//            1.0f, -1.0f, 1.f, 0.f,
-//            -1.0f, 1.0f, 0.f, 1.f,
-//            1.0f, 1.0f, 1.f, 1.f,
-//    };
-
     private static final float VERTICES_DATA[] = {
             // X, Y, U, V
-            -1.0f, -1.0f, 0.f, 1.f,
-            1.0f, -1.0f, 1.f, 1.f,
-            -1.0f, 1.0f, 0.f, 0.f,
-            1.0f, 1.0f, 1.f, 0.f,
+            -1.0f, -1.0f, 0.f, 0.f,
+            1.0f, -1.0f, 1.f, 0.f,
+            -1.0f, 1.0f, 0.f, 1.f,
+            1.0f, 1.0f, 1.f, 1.f,
     };
+
+//    private static final float VERTICES_DATA[] = {
+//            // X, Y, U, V
+//            -1.0f, -1.0f, 0.f, 1.f,
+//            1.0f, -1.0f, 1.f, 1.f,
+//            -1.0f, 1.0f, 0.f, 0.f,
+//            1.0f, 1.0f, 1.f, 0.f,
+//    };
 
 
 //    private static final float VERTICES_DATA[] = {
@@ -128,7 +132,6 @@ public class GLUtil {
     static boolean isChanged = true;
     static public ByteBuffer mData;
     static public boolean sShapeChanged = true;
-
     private static final int SIZEOF_FLOAT = 4;
 
     static public void initDrawable() {
@@ -294,7 +297,14 @@ public class GLUtil {
     }
 
     static public void copyEnhance(int srcTextureId, int dstTextureId, int width, int height) {
-        VarifyRender.mEnhanceEngine.apply(srcTextureId, dstTextureId, width, height);
+//        VarifyRender.mEnhanceEngine.apply(srcTextureId, dstTextureId, width, height);
+//        VarifyRender.mLuminance.apply(srcTextureId, dstTextureId, width, height);
+//        VarifyRender.mLuminance.apply(srcTextureId, VarifyRender.LumTextureId, width, height);
+//        int[] InputTextures = {srcTextureId, VarifyRender.LumTextureId};
+//        float[] pa = {100, 0.95f, 1, 0.4f };
+//        VarifyRender.mDrago.setParameters(0, pa);
+//        VarifyRender.mDrago.apply(InputTextures, dstTextureId, width, height);
+        VarifyRender.mDragoTMO.apply(srcTextureId, dstTextureId, width, height);
         glFinish();
     }
     static public void copy(int programHandle, float[] mvpMatrix, FloatBuffer vertexBuffer, int firstVertex,

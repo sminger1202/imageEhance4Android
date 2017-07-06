@@ -28,6 +28,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class VarifyRender implements GLSurfaceView.Renderer,
         SurfaceTexture.OnFrameAvailableListener{
     private String TAG = this.getClass().getSimpleName();
+    private Context mContext;
     private int mTextureId;
     private int mTextureIdEnhance;
     private int mFrameBufferObj;
@@ -43,6 +44,7 @@ public class VarifyRender implements GLSurfaceView.Renderer,
 
 
     public VarifyRender(Context context, GLSurfaceView glSurfaceView){
+        mContext = context;
         mGLSurfaceView = glSurfaceView;
     }
     @Override
@@ -52,7 +54,7 @@ public class VarifyRender implements GLSurfaceView.Renderer,
         mProgram = GLUtil.createProgram(GLUtil.VERTEX_SHADER, GLUtil.FRAGMENT_SHADER_EXT);
         mProgramEnhance = GLUtil.createProgram(GLUtil.VERTEX_SHADER, GLUtil.FRAGMENT_SHADER_EXT_ENH);
 
-        mEnhanceEngine = CVFactory.getEngineInstance(CVFactory.ENHANCE);
+        mEnhanceEngine = CVFactory.getEngineInstance(mContext, CVFactory.ENHANCE);
 
         GLUtil.localAttriAndOthers(mProgram);
         GLUtil.localAttriAndOthersEhn(mProgramEnhance);

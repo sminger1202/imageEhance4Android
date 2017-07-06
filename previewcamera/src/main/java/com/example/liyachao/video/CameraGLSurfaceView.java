@@ -45,8 +45,8 @@ public class CameraGLSurfaceView extends GLSurfaceView implements Renderer, Surf
         mSurface = new SurfaceTexture(mTextureID);
         mSurface.setOnFrameAvailableListener(this);
         mDirectDrawer = new DirectDrawer(mTextureID);
-        CameraCapture.get().openBackCamera();
-
+//        CameraCapture.get().openBackCamera();
+        CameraCapture.get().openFrontCamera();
     }
 
     @Override
@@ -58,8 +58,6 @@ public class CameraGLSurfaceView extends GLSurfaceView implements Renderer, Surf
         if (!CameraCapture.get().isPreviewing()) {
             CameraCapture.get().doStartPreview(mSurface);
         }
-
-
     }
 
     @Override

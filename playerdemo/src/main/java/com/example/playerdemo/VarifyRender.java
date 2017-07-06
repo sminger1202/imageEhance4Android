@@ -24,8 +24,10 @@ import javax.microedition.khronos.opengles.GL10;
 public class VarifyRender implements GLSurfaceView.Renderer,
         SurfaceTexture.OnFrameAvailableListener{
     private String TAG = this.getClass().getSimpleName();
+    private Context mContext;
     private int mTextureId;
     private int mTextureIdEnhance;
+    public static int LumTextureId;
     private SurfaceTexture mSurfaceTexture;
     private GLSurfaceView mGLSurfaceView;
     public static int mProgramExt;
@@ -38,9 +40,13 @@ public class VarifyRender implements GLSurfaceView.Renderer,
     private float[] transform = new float[16];
     private long num = 0;
     static IEngine mEnhanceEngine;
+//    static IEngine mLuminance;
+//    static IEngine mDrago;
+    static IEngine mDragoTMO;
 
 
     public VarifyRender(Context context, GLSurfaceView glSurfaceView){
+        mContext = context;
         mGLSurfaceView = glSurfaceView;
     }
     @Override
@@ -50,12 +56,16 @@ public class VarifyRender implements GLSurfaceView.Renderer,
         mProgramExt = GLUtil.createProgram(GLUtil.VERTEX_SHADER, GLUtil.FRAGMENT_SHADER_EXT);//与copy共用。
         mProgramCopy = mProgramExt;
         mProgramInner = GLUtil.createProgram(GLUtil.VERTEX_SHADER, GLUtil.FRAGMENT_SHADER_INNER);
-        mEnhanceEngine = CVFactory.getEngineInstance(CVFactory.ENHANCE);
+        mEnhanceEngine = CVFactory.getEngineInstance(mContext, CVFactory.ENHANCE);
+//        mLuminance = CVFactory.getEngineInstance(mContext, CVFactory.LUMINANCE);
+//        mDrago = CVFactory.getEngineInstance(mContext, CVFactory.DRAGO);
+        mDragoTMO = CVFactory.getEngineInstance(mContext, CVFactory.DRAGOTMO);
         GLUtil.localAttriExt(mProgramExt);
         GLUtil.localAttriInner(mProgramInner);
 //        GLUtil.localAttriAndOthersEhn(mProgramEnhance);
         mTextureId = GLUtil.createExtTextureObject();
         mTextureIdEnhance = GLUtil.createInerTextureObject();
+        LumTextureId =  GLUtil.createInerTextureObject();
         Log.i(TAG, "mTexid :" + mTextureId + " mTidEn" +   mTextureIdEnhance);
         mSurfaceTexture = new SurfaceTexture(mTextureId);
         mSurfaceTexture.setOnFrameAvailableListener(this);

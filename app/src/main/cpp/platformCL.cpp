@@ -11,6 +11,7 @@
 #include <EGL/egl.h>
 #include "platformCL.h"
 #include "utils.h"
+#include <stdlib.h>
 
 const char *kernelSource =                                           "\n" \
 "__kernel void SimpleIndexing (                                       \n" \
