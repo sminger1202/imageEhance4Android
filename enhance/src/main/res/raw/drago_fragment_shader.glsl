@@ -32,16 +32,3 @@ void main() {
 //    color = pow(color,vec3(1.0/2.2));
     gl_FragColor = vec4(color, 1.0);
 }
-
-//void main() {
-////    vec3  color = texture2D( s_texture, textureCoordinate ).xyz;
-////    gl_FragColor = vec4(color, 1.0);
-//
-//    vec3  color = texture2D( s_texture, textureCoordinate ).xyz;
-//    float L = texture2D(u_lum, textureCoordinate).x;
-//    color.x = L;
-//    gl_FragColor = vec4(color, 1.0);
-////
-////    float L = texture2D(u_lum, textureCoordinate).x;
-////    gl_FragColor = vec4(L, L, L, 1.0);
-//}

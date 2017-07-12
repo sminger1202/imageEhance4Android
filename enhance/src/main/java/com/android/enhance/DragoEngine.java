@@ -107,7 +107,7 @@ public class DragoEngine extends EngineBase {
 
     @Override
     public void apply(int[] srcTextureId, int dstTextureId, int width, int height) {
-        Log.d(TAG, "Drago apply");
+//        Log.d(TAG, "Drago apply");
         boolean isChanged = true;
         if (width != mWidth || height != mHeight) {
             isChanged = true;

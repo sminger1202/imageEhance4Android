@@ -17,7 +17,8 @@
         tools:context="com.muneikh.ui.CameraActivity" />
     <Switch
         android:id="@+id/modeToggle"
-        android:layout_below="@id/playview"
+        android:layout_alignTop="@+id/playview"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

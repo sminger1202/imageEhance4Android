@@ -14,9 +14,6 @@ import static android.opengl.GLES20.GL_TEXTURE_2D;
  */
 
 public class LuminanceEngine extends EngineBase {
-
-    private int mvpMatrixLoc;
-    private int texMatrixLoc;
     private int positionLoc;
     private int textureCoordLoc;
     private int weights;
@@ -49,8 +46,6 @@ public class LuminanceEngine extends EngineBase {
         checkLocation(positionLoc, "vPosition ");
         textureCoordLoc = GLES20.glGetAttribLocation(mProgram, "inputTextureCoordinate");
         checkLocation(textureCoordLoc, "inputTextureCoordinate ");
-        mvpMatrixLoc = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
-        checkLocation(mvpMatrixLoc, "uMVPMatrix ");
         weights = GLES20.glGetUniformLocation(mProgram, "weights");
         checkLocation(weights, "weight ");
     }
@@ -92,7 +87,7 @@ public class LuminanceEngine extends EngineBase {
 
     @Override
     public void apply(int srcTextureId, int dstTextureId, int width, int height) {
-        Log.d(TAG, "Luminance apply.");
+//        Log.d(TAG, "Luminance apply.");
         boolean isChanged = true;
         if (width != mWidth || height != mHeight) {
             isChanged = true;
@@ -131,28 +126,23 @@ public class LuminanceEngine extends EngineBase {
                 mWidth, mHeight);
         checkGlError("glUseProgram");
 
-
-        // Enable the "aPosition" vertex attribute.
-        GLES20.glEnableVertexAttribArray(positionLoc);
-        checkGlError("glEnableVertexAttribArray positionLoc");
-
         // Connect vertexBuffer to "aPosition".
         GLES20.glVertexAttribPointer(positionLoc, coordsPerVertex,
                 GLES20.GL_FLOAT, false, vertexStride, 0);
         checkGlError("glVertexAttribPointer positionLoc");
 
-        // Enable the "aTextureCoord" vertex attribute.
-        GLES20.glEnableVertexAttribArray(textureCoordLoc);
-        checkGlError("glEnableVertexAttribArray textureCoordLoc");
+        // Enable the "aPosition" vertex attribute.
+        GLES20.glEnableVertexAttribArray(positionLoc);
+        checkGlError("glEnableVertexAttribArray positionLoc");
 
         // Connect texBuffer to "aTextureCoord".
         GLES20.glVertexAttribPointer(textureCoordLoc, colorPerVertex,
                 GLES20.GL_FLOAT, false, vertexStride, coordsPerVertex * FLOAT_SIZE_BYTES);
         checkGlError("glVertexAttribPointer textureCoordLoc");
 
-
-        GLES20.glUniformMatrix4fv(mvpMatrixLoc, 1, false, mvpMatrix, 0);
-        checkGlError("glUniformMatrix4fv mvpMatrixLoc");
+        // Enable the "aTextureCoord" vertex attribute.
+        GLES20.glEnableVertexAttribArray(textureCoordLoc);
+        checkGlError("glEnableVertexAttribArray textureCoordLoc");
 
         GLES20.glUniform3fv(weights, 1, weightValue, 0);
         checkGlError("glUniform4fv weights");

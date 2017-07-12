@@ -5,6 +5,8 @@ import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
 
+import com.android.enhance.utils.TextResourceReader;
+
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
 import static android.opengl.GLES20.GL_TEXTURE_2D;
 
@@ -15,13 +17,13 @@ import static android.opengl.GLES20.GL_TEXTURE_2D;
 public class EnhanceEngine extends EngineBase{
     String TAG = this.getClass().getSimpleName();
 
-    private int dxLoc;
-    private int dyLoc;
-    private int coefLoc;
-    private int mvpMatrixLocEhn;
-    private int texMatrixLocEhn;
-    private int positionLocEhn;
-    private int textureCoordLocEhn;
+    private int dxLoc = -1;
+    private int dyLoc = -1;
+    private int coefLoc = -1;
+    private int mvpMatrixLocEhn = -1;
+    private int texMatrixLocEhn = -1;
+    private int positionLocEhn = -1;
+    private int textureCoordLocEhn = -1;
 
     private float dx = 0.f;
     private float dy = 0.f;
@@ -45,15 +47,17 @@ public class EnhanceEngine extends EngineBase{
         positionLocEhn = GLES20.glGetAttribLocation(mProgram, "aPosition");
         checkLocation(positionLocEhn, "aPosition Ehn");
         textureCoordLocEhn = GLES20.glGetAttribLocation(mProgram, "aTextureCoord");
-        checkLocation(textureCoordLocEhn, "aTextureCoord Ehn");
+        checkLocation(textureCoordLocEhn, "aTextureCoord");
+
         mvpMatrixLocEhn = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
         checkLocation(mvpMatrixLocEhn, "uMVPMatrix Ehn");
         texMatrixLocEhn = GLES20.glGetUniformLocation(mProgram, "uTexMatrix");
         checkLocation(texMatrixLocEhn, "uTexMatrix Ehn");
-        dxLoc = GLES20.glGetUniformLocation(mProgram, "dx");
-        checkLocation(dxLoc, "dx Ehn");
-        dyLoc = GLES20.glGetUniformLocation(mProgram, "dy");
-        checkLocation(dyLoc, "dy Ehn");
+//
+//        dxLoc = GLES20.glGetUniformLocation(mProgram, "dx");
+//        checkLocation(dxLoc, "dx Ehn");
+//        dyLoc = GLES20.glGetUniformLocation(mProgram, "dy");
+//        checkLocation(dyLoc, "dy Ehn");
         coefLoc = GLES20.glGetUniformLocation(mProgram, "coef");
         checkLocation(coefLoc, "coefficient");
 
@@ -100,7 +104,7 @@ public class EnhanceEngine extends EngineBase{
 
     @Override
     public void apply(final int srcTextureId, final int dstTextureId, final int width,final int height) {
-        Log.i(TAG, "Enhance apply");
+//        Log.i(TAG, "Enhance apply");
         boolean isChanged = true;
         if (mWidth == width && mHeight == height) {
             isChanged = false;
@@ -142,21 +146,27 @@ public class EnhanceEngine extends EngineBase{
                 mWidth, mHeight);
         checkGlError("glUseProgram");
 
-        GLES20.glUniformMatrix4fv(mvpMatrixLocEhn, 1, false, mvpMatrix, 0);
-        checkGlError("glUniformMatrix4fv mvpMatrixLoc");
+        if (mvpMatrixLocEhn >= 0) {
+            GLES20.glUniformMatrix4fv(mvpMatrixLocEhn, 1, false, mvpMatrix, 0);
+            checkGlError("glUniformMatrix4fv mvpMatrixLoc");
+        }
 
-        GLES20.glUniformMatrix4fv(texMatrixLocEhn, 1, false, texMatrix, 0);
-        checkGlError("glUniformMatrix4fv texMatrixLoc");
+        if (mvpMatrixLocEhn >= 0) {
+            GLES20.glUniformMatrix4fv(texMatrixLocEhn, 1, false, texMatrix, 0);
+            checkGlError("glUniformMatrix4fv texMatrixLoc");
+        }
 
         //dx,dy
-        GLES20.glUniform1f(dxLoc, dx);
-        checkGlError("dxloc");
+        if (dxLoc >= 0 && dxLoc >= 0) {
+            GLES20.glUniform1f(dxLoc, dx);
+            checkGlError("dxloc");
 
-        GLES20.glUniform1f(dyLoc, dy);
-        checkGlError("dyloc");
-
+            GLES20.glUniform1f(dyLoc, dy);
+            checkGlError("dyloc");
+        }
         GLES20.glUniform1f(coefLoc, coef);
         checkGlError("effect coefficient");
+
 
         // Enable the "aPosition" vertex attribute.
         GLES20.glEnableVertexAttribArray(positionLocEhn);
@@ -166,6 +176,7 @@ public class EnhanceEngine extends EngineBase{
         GLES20.glVertexAttribPointer(positionLocEhn, coordsPerVertex,
                 GLES20.GL_FLOAT, false, vertexStride, 0);
         checkGlError("glVertexAttribPointer positionLoc");
+
 
         // Enable the "aTextureCoord" vertex attribute.
         GLES20.glEnableVertexAttribArray(textureCoordLocEhn);
@@ -195,11 +206,13 @@ public class EnhanceEngine extends EngineBase{
 
     @Override
     protected String getVertexSource() {
-        return getVertexShader();
+        return TextResourceReader.readTextFileFromResource(mContext,R.raw.enhance_vertex_shader);
+//        return getVertexShader();
     }
     @Override
     protected String getfragmentSource() {
-        return getFragmentShader();
+        return TextResourceReader.readTextFileFromResource(mContext, R.raw.enhance_fragment_shader);
+//        return getFragmentShader();
     }
 
     @Override

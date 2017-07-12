@@ -9,7 +9,9 @@ import android.opengl.GLUtils;
 import android.os.Debug;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -39,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Debug.startMethodTracing("/sdcard/traceMethod");
         setContentView(R.layout.activity_main);
         mContxt = this;
         enhanceSwitch = (Switch) findViewById(R.id.modeToggle);
@@ -54,7 +55,10 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Debug.stopMethodTracing();
                 }
-                Log.d(TAG, "toggle Enchance" + GLUtil.sIsEnhance );
+//                TelephonyManager mTm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+//                String imei = mTm.getDeviceId();
+//                Log.e(TAG, "Imei: xxxxx:" + imei );
+                Log.d(TAG, "toggle Enchance : " + GLUtil.sIsEnhance );
             }
         });
         playButton = (Button)findViewById(R.id.playbotton);
@@ -198,6 +202,12 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
         }
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        Log.d(TAG, "onkeydown :" + keyCode);
+        return super.onKeyDown(keyCode, event);
     }
 
     private void showRationaleDialog() {

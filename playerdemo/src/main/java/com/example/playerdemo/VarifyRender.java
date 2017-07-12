@@ -40,10 +40,9 @@ public class VarifyRender implements GLSurfaceView.Renderer,
     private float[] transform = new float[16];
     private long num = 0;
     static IEngine mEnhanceEngine;
-//    static IEngine mLuminance;
+    static IEngine mLuminance;
 //    static IEngine mDrago;
     static IEngine mDragoTMO;
-
 
     public VarifyRender(Context context, GLSurfaceView glSurfaceView){
         mContext = context;
@@ -57,7 +56,7 @@ public class VarifyRender implements GLSurfaceView.Renderer,
         mProgramCopy = mProgramExt;
         mProgramInner = GLUtil.createProgram(GLUtil.VERTEX_SHADER, GLUtil.FRAGMENT_SHADER_INNER);
         mEnhanceEngine = CVFactory.getEngineInstance(mContext, CVFactory.ENHANCE);
-//        mLuminance = CVFactory.getEngineInstance(mContext, CVFactory.LUMINANCE);
+        mLuminance = CVFactory.getEngineInstance(mContext, CVFactory.LUMINANCE);
 //        mDrago = CVFactory.getEngineInstance(mContext, CVFactory.DRAGO);
         mDragoTMO = CVFactory.getEngineInstance(mContext, CVFactory.DRAGOTMO);
         GLUtil.localAttriExt(mProgramExt);

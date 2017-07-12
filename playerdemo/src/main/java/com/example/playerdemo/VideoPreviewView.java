@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.opengl.GLSurfaceView;
+import android.opengl.GLUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -40,6 +41,8 @@ public class VideoPreviewView extends GLSurfaceView
         mMediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
             @Override
             public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+                GLUtil.videoWidth = width;
+                GLUtil.videoHeight = height;
                 Log.d(TAG, "video size change :" + width + "x" + height);
             }
         });
@@ -173,8 +176,10 @@ public class VideoPreviewView extends GLSurfaceView
         isMediaPlayerReady = true;
 
         mDurationTime = mMediaPlayer.getDuration();
-        Log.d(TAG, "onPrepared  dev" + size.x +"x"+ size.y);
-        Log.d(TAG, "onPrepared  mp" + mp.getVideoWidth() +"x"+ mp.getVideoHeight());
-        Log.d(TAG, "onPrepared  final" + GLUtil.sWidth +"x"+ GLUtil.sHeight);
+        GLUtil.videoWidth = mp.getVideoWidth();
+        GLUtil.videoHeight = mp.getVideoHeight();
+        Log.d(TAG, "onPrepared  dev:" + size.x +"x"+ size.y);
+        Log.d(TAG, "onPrepared  mp :" + mp.getVideoWidth() +"x"+ mp.getVideoHeight());
+        Log.d(TAG, "onPrepared  dis:" + GLUtil.sWidth +"x"+ GLUtil.sHeight);
     }
 }

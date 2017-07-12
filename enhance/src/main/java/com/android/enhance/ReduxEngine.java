@@ -60,7 +60,7 @@ public class ReduxEngine extends EngineBase {
         initTexParams();
         GLES20.glTexImage2D(GL_TEXTURE_2D, 0, GLES20.GL_RGBA,//allocate storage
                 width, height, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
-        GLES20.glBindTexture(GL_TEXTURE_2D, textureID);
+        GLES20.glBindTexture(GL_TEXTURE_2D, 0);
         return textureID;
 
     }
@@ -82,6 +82,9 @@ public class ReduxEngine extends EngineBase {
             imageGL.textureID = createTexture(width, height);
             imgList.add(imageGL);
             checkSize = Math.min(width, height);
+        }
+        for (ImageGL img: imgList) {
+            Log.d(TAG, "repeat size :" + img.width + "x" + img.height );
         }
         //申请最后一个块的大小
 
@@ -116,7 +119,6 @@ public class ReduxEngine extends EngineBase {
         checkLocation(textureCoordLoc, "inputTextureCoordinate ");
         mvpMatrixLoc = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
         checkLocation(mvpMatrixLoc, "uMVPMatrix ");
-
 
         dxLoc = GLES20.glGetUniformLocation(mProgram, "dx");
         checkLocation(dxLoc, "dx ");

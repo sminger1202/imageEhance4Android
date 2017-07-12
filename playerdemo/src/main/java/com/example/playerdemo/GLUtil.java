@@ -4,10 +4,6 @@ import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
 
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
-import org.xmlpull.v1.XmlSerializer;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -129,6 +125,8 @@ public class GLUtil {
 
     static int sWidth = 600;
     static int sHeight = 300;
+    static int videoWidth = 600;
+    static int videoHeight = 300;
     static boolean isChanged = true;
     static public ByteBuffer mData;
     static public boolean sShapeChanged = true;
@@ -232,23 +230,28 @@ public class GLUtil {
         GLES20.glFinish();
 
         if (GLUtil.sIsEnhance) {
-            copyEnhance(textureId, textureIddst, sWidth, sHeight);
+//            copyEnhance(textureId, textureIddst, sWidth, sHeight);
+            copyEnhance(textureId, textureIddst, videoWidth, videoHeight);
         } else {
             copy2( VarifyRender.mProgramCopy, mvpMatrix, texMatrix, textureId,
                     textureIddst,  mFrameBufferObj);
         }
-        if(sIsEnhance) {
-            saveImg("/sdcard/enhanced.rgba");
-        } else {
-            saveImg("/sdcard/unEnhance.rgba");
-        }
+//        if(sIsEnhance) {
+//            saveImg("/sdcard/enhanced.rgba");
+//        } else {
+//            saveImg("/sdcard/unEnhance.rgba");
+//        }
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO);
         GLES20.glUseProgram(VarifyRender.mProgramInner);
         checkGlError("glUseProgram");
 
+//        GLES20.glViewport(500, 500,
+//                videoWidth, videoHeight);
+
         GLES20.glViewport(0, 0,
                 sWidth, sHeight);
+
         GLES20.glUniformMatrix4fv(mvpMatrixLocIn, 1, false, mvpMatrix, 0);
         checkGlError("glUniformMatrix4fv mvpMatrixLoc");
 
@@ -298,13 +301,8 @@ public class GLUtil {
 
     static public void copyEnhance(int srcTextureId, int dstTextureId, int width, int height) {
 //        VarifyRender.mEnhanceEngine.apply(srcTextureId, dstTextureId, width, height);
-//        VarifyRender.mLuminance.apply(srcTextureId, dstTextureId, width, height);
-//        VarifyRender.mLuminance.apply(srcTextureId, VarifyRender.LumTextureId, width, height);
-//        int[] InputTextures = {srcTextureId, VarifyRender.LumTextureId};
-//        float[] pa = {100, 0.95f, 1, 0.4f };
-//        VarifyRender.mDrago.setParameters(0, pa);
-//        VarifyRender.mDrago.apply(InputTextures, dstTextureId, width, height);
-        VarifyRender.mDragoTMO.apply(srcTextureId, dstTextureId, width, height);
+//        VarifyRender.mDragoTMO.apply(srcTextureId, dstTextureId, width, height);
+        VarifyRender.mLuminance.apply(srcTextureId, dstTextureId, width, height);
         glFinish();
     }
     static public void copy(int programHandle, float[] mvpMatrix, FloatBuffer vertexBuffer, int firstVertex,
@@ -400,9 +398,9 @@ public class GLUtil {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
         GLES20.glBindTexture(GL_TEXTURE_2D, textureIddst);
         if (isChanged) {
-            Log.d(TAG, "change dst texture:" + sWidth + "x" + sHeight);
+            Log.d(TAG, "change dst texture:" + videoWidth + "x" + videoHeight);
             GLES20.glTexImage2D(GL_TEXTURE_2D, 0, GLES20.GL_RGBA,//allocate storage
-                    sWidth, sHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
+                    videoWidth, videoHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
             GLES20.glTexParameteri(GL_TEXTURE_2D,
                     GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
             GLES20.glTexParameteri(GL_TEXTURE_2D,
@@ -432,7 +430,7 @@ public class GLUtil {
         // Copy the model / view / projection matrix over.
         GLES20.glUseProgram(VarifyRender.mProgramExt);
         GLES20.glViewport(0, 0,
-                sWidth, sHeight);
+                videoWidth, videoHeight);
         checkGlError("glUseProgram");
         GLES20.glUniformMatrix4fv(mvpMatrixLocExt, 1, false, IDENTITY_MATRIX, 0);
         checkGlError("glUniformMatrix4fv mvpMatrixLoc");
@@ -496,7 +494,6 @@ public class GLUtil {
         GLES20.glGetIntegerv(GLES20.GL_ARRAY_BUFFER_BINDING, glInt, 0);
         previousVBO = glInt[0];
         GLES20.glGetIntegerv(GLES20.GL_VIEWPORT, previousViewport, 0);
-        Log.i(TAG, "save vbo id :" + previousVBO);
         checkGlError("save state");
 
         GLES20.glDisable(GLES20.GL_BLEND);
@@ -511,7 +508,7 @@ public class GLUtil {
     }
     static void restoreState() {
         // ======Restore state and cleanup.
-        Log.i(TAG, "restore vbo id :" + previousVBO);
+//        Log.i(TAG, "restore vbo id :" + previousVBO);
         if (previousFBO > 0) {
             GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, previousFBO);
         }

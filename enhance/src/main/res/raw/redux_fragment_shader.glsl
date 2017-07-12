@@ -21,6 +21,6 @@ void main() {
     color = max(color, color11);
     color = (coords == vec2(1.0, 1.0)) ? color00 : color;
 
-    gl_FragColor = vec4(color.xyz, 1.0);
+    gl_FragColor = vec4(color.xyz, 0.4);
 
 }

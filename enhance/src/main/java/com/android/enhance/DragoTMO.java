@@ -152,11 +152,11 @@ public class DragoTMO extends EngineBase {
             mWidth = width;
             mHeight = height;
 
-            byteBuffer = ByteBuffer.allocateDirect(mWidth * mHeight * 4);
-            byteData = new byte[mWidth * mHeight * 4];
-
-            floatBuffer = FloatBuffer.allocate(mWidth * mHeight * 4);
-            floatData = new float[mWidth * mHeight * 4];
+//            byteBuffer = ByteBuffer.allocateDirect(mWidth * mHeight * 4);
+//            byteData = new byte[mWidth * mHeight * 4];
+//
+//            floatBuffer = FloatBuffer.allocate(mWidth * mHeight * 4);
+//            floatData = new float[mWidth * mHeight * 4];
         }
         mLuminance.apply(srcTextureId, mLumTextureId, width, height);
 //        getMaxMin(mLumTextureId, mMaxMin);

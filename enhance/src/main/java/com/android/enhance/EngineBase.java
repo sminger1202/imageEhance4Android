@@ -163,7 +163,8 @@ public abstract class EngineBase implements IEngine{
 
     protected void checkLocation(int location, String label) {
         if (location < 0) {
-            throw new RuntimeException("Unable to locate '" + label + "' in program");
+            Log.e(TAG, "Unable to locate '" + label + "' in program");
+//            throw new RuntimeException("Unable to locate '" + label + "' in program");
         }
     }
 
