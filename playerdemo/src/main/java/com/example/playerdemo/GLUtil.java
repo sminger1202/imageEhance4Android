@@ -1,6 +1,6 @@
 package com.example.playerdemo;
 
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.opengl.Matrix;
 import android.util.Log;
 
@@ -12,9 +12,9 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
-import static android.opengl.GLES20.GL_ARRAY_BUFFER;
-import static android.opengl.GLES20.GL_TEXTURE_2D;
-import static android.opengl.GLES20.glFinish;
+import static android.opengl.GLES30.GL_ARRAY_BUFFER;
+import static android.opengl.GLES30.GL_TEXTURE_2D;
+import static android.opengl.GLES30.glFinish;
 
 /**
  * Created by shiming on 2017/5/18.
@@ -153,9 +153,9 @@ public class GLUtil {
      * @param vbo
      */
     static public void loadDataVBF(int vbo) {
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo);
-        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, VERTICES_DATA.length * SIZEOF_FLOAT,
-                VerticesBuffer, GLES20.GL_STATIC_DRAW);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, vbo);
+        GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, VERTICES_DATA.length * SIZEOF_FLOAT,
+                VerticesBuffer, GLES30.GL_STATIC_DRAW);
     }
     /**
      * Issues the draw call.  Does the full setup on every call.
@@ -175,62 +175,61 @@ public class GLUtil {
     static void draw(int programHandle, float[] mvpMatrix,float[] texMatrix, int textureId) {
         // Select the program.
 
-        GLES20.glUseProgram(programHandle);
+        GLES30.glUseProgram(programHandle);
         checkGlError("glUseProgram");
 
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVBO);
         // Set the texture.
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureId);
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+        GLES30.glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureId);
 
         // Copy the model / view / projection matrix over.
-        GLES20.glUniformMatrix4fv(mvpMatrixLocExt, 1, false, mvpMatrix, 0);
+        GLES30.glUniformMatrix4fv(mvpMatrixLocExt, 1, false, mvpMatrix, 0);
         checkGlError("glUniformMatrix4fv");
 
         // Copy the texture transformation matrix over.
-        GLES20.glUniformMatrix4fv(texMatrixLocExt, 1, false, texMatrix, 0);
+        GLES30.glUniformMatrix4fv(texMatrixLocExt, 1, false, texMatrix, 0);
         checkGlError("glUniformMatrix4fv");
 
         // Enable the "aPosition" vertex attribute.
-        GLES20.glEnableVertexAttribArray(positionLocExt);
+        GLES30.glEnableVertexAttribArray(positionLocExt);
         checkGlError("glEnableVertexAttribArray");
 
             // Connect vertexBuffer to "aPosition".
-        GLES20.glVertexAttribPointer(positionLocExt, coordsPerVertex,
-                GLES20.GL_FLOAT, false, vertexCount * SIZEOF_FLOAT, 0);
+        GLES30.glVertexAttribPointer(positionLocExt, coordsPerVertex,
+                GLES30.GL_FLOAT, false, vertexCount * SIZEOF_FLOAT, 0);
         checkGlError("glVertexAttribPointer");
 
         // Enable the "aTextureCoord" vertex attribute.
-        GLES20.glEnableVertexAttribArray(textureCoordLocExt);
+        GLES30.glEnableVertexAttribArray(textureCoordLocExt);
         checkGlError("glEnableVertexAttribArray");
 
         // Connect texBuffer to "aTextureCoord".
-        GLES20.glVertexAttribPointer(textureCoordLocExt, colorPerVertex,
-                GLES20.GL_FLOAT, false, vertexCount * SIZEOF_FLOAT, coordsPerVertex * SIZEOF_FLOAT);
+        GLES30.glVertexAttribPointer(textureCoordLocExt, colorPerVertex,
+                GLES30.GL_FLOAT, false, vertexCount * SIZEOF_FLOAT, coordsPerVertex * SIZEOF_FLOAT);
         checkGlError("glVertexAttribPointer");
 
         // Draw the rect.
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, vertexCount);
+        GLES30.glDrawArrays(GLES30.GL_TRIANGLE_STRIP, 0, vertexCount);
         checkGlError("glDrawArrays");
 
-        GLES20.glViewport(0, 0,
+        GLES30.glViewport(0, 0,
                 sWidth, sHeight);
         // Done -- disable vertex array, texture, and program.
-        GLES20.glDisableVertexAttribArray(positionLocExt);
-        GLES20.glDisableVertexAttribArray(textureCoordLocExt);
-        GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
-        GLES20.glBindBuffer(GL_ARRAY_BUFFER, 0);
-        GLES20.glUseProgram(0);
+        GLES30.glDisableVertexAttribArray(positionLocExt);
+        GLES30.glDisableVertexAttribArray(textureCoordLocExt);
+        GLES30.glBindTexture(GL_TEXTURE_EXTERNAL_OES, 0);
+        GLES30.glBindBuffer(GL_ARRAY_BUFFER, 0);
+        GLES30.glUseProgram(0);
     }
 
     static void drawWithCopy( float[] mvpMatrix, FloatBuffer vertexBuffer, int firstVertex,
                      int vertexCount, int coordsPerVertex, int vertexStride,
                      float[] texMatrix, FloatBuffer texBuffer, int textureId, int texStride, int textureIddst) {
 
-        GLES20.glFinish();
+        GLES30.glFinish();
 
         if (GLUtil.sIsEnhance) {
-//            copyEnhance(textureId, textureIddst, sWidth, sHeight);
             copyEnhance(textureId, textureIddst, videoWidth, videoHeight);
         } else {
             copy2( VarifyRender.mProgramCopy, mvpMatrix, texMatrix, textureId,
@@ -242,67 +241,67 @@ public class GLUtil {
 //            saveImg("/sdcard/unEnhance.rgba");
 //        }
 
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO);
-        GLES20.glUseProgram(VarifyRender.mProgramInner);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVBO);
+        GLES30.glUseProgram(VarifyRender.mProgramInner);
         checkGlError("glUseProgram");
 
-//        GLES20.glViewport(500, 500,
+//        GLES30.glViewport(500, 500,
 //                videoWidth, videoHeight);
 
-        GLES20.glViewport(0, 0,
+        GLES30.glViewport(0, 0,
                 sWidth, sHeight);
 
-        GLES20.glUniformMatrix4fv(mvpMatrixLocIn, 1, false, mvpMatrix, 0);
+        GLES30.glUniformMatrix4fv(mvpMatrixLocIn, 1, false, mvpMatrix, 0);
         checkGlError("glUniformMatrix4fv mvpMatrixLoc");
 
             // Copy the texture transformation matrix over.
-        GLES20.glUniformMatrix4fv(texMatrixLocIn, 1, false, texMatrix, 0);
+        GLES30.glUniformMatrix4fv(texMatrixLocIn, 1, false, texMatrix, 0);
         checkGlError("glUniformMatrix4fv texMatrixLoc");
 
             // Enable the "aPosition" vertex attribute.
-        GLES20.glEnableVertexAttribArray(positionLocIn);
+        GLES30.glEnableVertexAttribArray(positionLocIn);
         checkGlError("glEnableVertexAttribArray positionLoc");
 
         // Connect vertexBuffer to "aPosition".
-        GLES20.glVertexAttribPointer(positionLocIn, coordsPerVertex,
-                GLES20.GL_FLOAT, false, vertexStride, 0);
+        GLES30.glVertexAttribPointer(positionLocIn, coordsPerVertex,
+                GLES30.GL_FLOAT, false, vertexStride, 0);
         checkGlError("glVertexAttribPointer positionLoc");
 
         // Enable the "aTextureCoord" vertex attribute.
-        GLES20.glEnableVertexAttribArray(textureCoordLocIn);
+        GLES30.glEnableVertexAttribArray(textureCoordLocIn);
         checkGlError("glEnableVertexAttribArray textureCoordLoc");
 
         // Connect texBuffer to "aTextureCoord".
-        GLES20.glVertexAttribPointer(textureCoordLocIn, colorPerVertex,
-                GLES20.GL_FLOAT, false, vertexStride, coordsPerVertex * SIZEOF_FLOAT);
+        GLES30.glVertexAttribPointer(textureCoordLocIn, colorPerVertex,
+                GLES30.GL_FLOAT, false, vertexStride, coordsPerVertex * SIZEOF_FLOAT);
         checkGlError("glVertexAttribPointer textureCoordLoc");
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, 0);
+        GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, 0);
 
         // Set the input texture
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
         checkGlError("glActiveTexture");
-        GLES20.glBindTexture(GL_TEXTURE_2D, textureIddst);
+        GLES30.glBindTexture(GL_TEXTURE_2D, textureIddst);
         checkGlError("glBindTexture");
 
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        GLES20.glClearColor(0, 0, 0, 0);
+        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
+        GLES30.glClearColor(0, 0, 0, 0);
 
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, firstVertex, vertexCount);
+        GLES30.glDrawArrays(GLES30.GL_TRIANGLE_STRIP, firstVertex, vertexCount);
 
         // Done -- disable vertex array, texture, and program.
-        GLES20.glDisableVertexAttribArray(positionLocIn);
-        GLES20.glDisableVertexAttribArray(textureCoordLocIn);
-        GLES20.glBindTexture(GL_TEXTURE_2D, 0);
-        GLES20.glBindBuffer(GL_ARRAY_BUFFER, 0);
-        GLES20.glUseProgram(0);
-        GLES20.glFinish();
+        GLES30.glDisableVertexAttribArray(positionLocIn);
+        GLES30.glDisableVertexAttribArray(textureCoordLocIn);
+        GLES30.glBindTexture(GL_TEXTURE_2D, 0);
+        GLES30.glBindBuffer(GL_ARRAY_BUFFER, 0);
+        GLES30.glUseProgram(0);
+        GLES30.glFinish();
         isChanged = false;
     }
 
     static public void copyEnhance(int srcTextureId, int dstTextureId, int width, int height) {
 //        VarifyRender.mEnhanceEngine.apply(srcTextureId, dstTextureId, width, height);
-//        VarifyRender.mDragoTMO.apply(srcTextureId, dstTextureId, width, height);
-        VarifyRender.mLuminance.apply(srcTextureId, dstTextureId, width, height);
+        VarifyRender.mDragoTMO.apply(srcTextureId, dstTextureId, width, height);
+//        VarifyRender.mLuminance.apply(srcTextureId, dstTextureId, width, height);
         glFinish();
     }
     static public void copy(int programHandle, float[] mvpMatrix, FloatBuffer vertexBuffer, int firstVertex,
@@ -311,83 +310,83 @@ public class GLUtil {
         saveGLState();
 
         // Set the texture.
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GL_TEXTURE_2D, textureIddst);
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+        GLES30.glBindTexture(GL_TEXTURE_2D, textureIddst);
         if (isChanged) {
             Log.d(TAG, "change dst texture:" + sWidth + "x" + sHeight);
-            GLES20.glTexImage2D(GL_TEXTURE_2D, 0, GLES20.GL_RGBA,//allocate storage
-                    sWidth, sHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
-            GLES20.glTexParameteri(GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-            GLES20.glTexParameteri(GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-            GLES20.glTexParameteri(GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-            GLES20.glTexParameteri(GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+            GLES30.glTexImage2D(GL_TEXTURE_2D, 0, GLES30.GL_RGBA,//allocate storage
+                    sWidth, sHeight, 0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, null);
+            GLES30.glTexParameteri(GL_TEXTURE_2D,
+                    GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
+            GLES30.glTexParameteri(GL_TEXTURE_2D,
+                    GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
+            GLES30.glTexParameteri(GL_TEXTURE_2D,
+                    GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
+            GLES30.glTexParameteri(GL_TEXTURE_2D,
+                    GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
         }
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, frameBufObj);
+        GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, frameBufObj);
         if (isChanged) {
-            GLES20.glFramebufferTexture2D(
-                    GLES20.GL_FRAMEBUFFER,
-                    GLES20.GL_COLOR_ATTACHMENT0,
+            GLES30.glFramebufferTexture2D(
+                    GLES30.GL_FRAMEBUFFER,
+                    GLES30.GL_COLOR_ATTACHMENT0,
                     GL_TEXTURE_2D, textureIddst, 0);
 
             // check status
-            int status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
-            if (status != GLES20.GL_FRAMEBUFFER_COMPLETE) {
+            int status = GLES30.glCheckFramebufferStatus(GLES30.GL_FRAMEBUFFER);
+            if (status != GLES30.GL_FRAMEBUFFER_COMPLETE) {
                 Log.e(TAG, "glCheckFramebufferStatus error" + status);
             }
         }
 
         if(sShapeChanged) {
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO);
-            GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, VERTICES_DATA.length * SIZEOF_FLOAT,
-                    vertexBuffer, GLES20.GL_STATIC_DRAW);
+            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVBO);
+            GLES30.glBufferData(GLES30.GL_ARRAY_BUFFER, VERTICES_DATA.length * SIZEOF_FLOAT,
+                    vertexBuffer, GLES30.GL_STATIC_DRAW);
             sShapeChanged = false;
         }
         // Copy the model / view / projection matrix over.
-        GLES20.glUseProgram(VarifyRender.mProgramExt);
-        GLES20.glViewport(0, 0,
+        GLES30.glUseProgram(VarifyRender.mProgramExt);
+        GLES30.glViewport(0, 0,
                 sWidth, sHeight);
         checkGlError("glUseProgram");
-        GLES20.glUniformMatrix4fv(mvpMatrixLocExt, 1, false, IDENTITY_MATRIX, 0);
+        GLES30.glUniformMatrix4fv(mvpMatrixLocExt, 1, false, IDENTITY_MATRIX, 0);
         checkGlError("glUniformMatrix4fv mvpMatrixLoc");
 
         // Copy the texture transformation matrix over.
-        GLES20.glUniformMatrix4fv(texMatrixLocExt, 1, false, IDENTITY_MATRIX, 0);
+        GLES30.glUniformMatrix4fv(texMatrixLocExt, 1, false, IDENTITY_MATRIX, 0);
         checkGlError("glUniformMatrix4fv texMatrixLoc");
 
         // Enable the "aPosition" vertex attribute.
-        GLES20.glEnableVertexAttribArray(positionLocExt);
+        GLES30.glEnableVertexAttribArray(positionLocExt);
         checkGlError("glEnableVertexAttribArray positionLoc");
 
         // Connect vertexBuffer to "aPosition".
-        GLES20.glVertexAttribPointer(positionLocExt, coordsPerVertex,
-                GLES20.GL_FLOAT, false, vertexStride, 0);
+        GLES30.glVertexAttribPointer(positionLocExt, coordsPerVertex,
+                GLES30.GL_FLOAT, false, vertexStride, 0);
         checkGlError("glVertexAttribPointer positionLoc");
 
         // Enable the "aTextureCoord" vertex attribute.
-        GLES20.glEnableVertexAttribArray(textureCoordLocExt);
+        GLES30.glEnableVertexAttribArray(textureCoordLocExt);
         checkGlError("glEnableVertexAttribArray textureCoordLoc");
 
         // Connect texBuffer to "aTextureCoord".
-        GLES20.glVertexAttribPointer(textureCoordLocExt, colorPerVertex,
-                GLES20.GL_FLOAT, false, vertexStride, coordsPerVertex * SIZEOF_FLOAT);
+        GLES30.glVertexAttribPointer(textureCoordLocExt, colorPerVertex,
+                GLES30.GL_FLOAT, false, vertexStride, coordsPerVertex * SIZEOF_FLOAT);
         checkGlError("glVertexAttribPointer textureCoordLoc");
 
 
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        GLES20.glClearColor(0, 0, 0, 0);
+        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
+        GLES30.glClearColor(0, 0, 0, 0);
         // connect 'VideoTexture' to video source texture (mTextureID) in texture unit 0.
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureId);
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+        GLES30.glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureId);
 
         // Draw the rect.
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+        GLES30.glDrawArrays(GLES30.GL_TRIANGLE_STRIP, 0, 4);
         checkGlError("glDrawArrays");
-        GLES20.glFinish();
+        GLES30.glFinish();
         restoreState();
     }
 
@@ -395,79 +394,79 @@ public class GLUtil {
                              int textureId, int textureIddst, int frameBufObj) {
         saveGLState();
         // Set the texture.
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GL_TEXTURE_2D, textureIddst);
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+        GLES30.glBindTexture(GL_TEXTURE_2D, textureIddst);
         if (isChanged) {
             Log.d(TAG, "change dst texture:" + videoWidth + "x" + videoHeight);
-            GLES20.glTexImage2D(GL_TEXTURE_2D, 0, GLES20.GL_RGBA,//allocate storage
-                    videoWidth, videoHeight, 0, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, null);
-            GLES20.glTexParameteri(GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-            GLES20.glTexParameteri(GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-            GLES20.glTexParameteri(GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-            GLES20.glTexParameteri(GL_TEXTURE_2D,
-                    GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+            GLES30.glTexImage2D(GL_TEXTURE_2D, 0, GLES30.GL_RGBA,//allocate storage
+                    videoWidth, videoHeight, 0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, null);
+            GLES30.glTexParameteri(GL_TEXTURE_2D,
+                    GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
+            GLES30.glTexParameteri(GL_TEXTURE_2D,
+                    GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
+            GLES30.glTexParameteri(GL_TEXTURE_2D,
+                    GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
+            GLES30.glTexParameteri(GL_TEXTURE_2D,
+                    GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
         }
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, frameBufObj);
+        GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, frameBufObj);
         if (isChanged) {
-            GLES20.glFramebufferTexture2D(
-                    GLES20.GL_FRAMEBUFFER,
-                    GLES20.GL_COLOR_ATTACHMENT0,
+            GLES30.glFramebufferTexture2D(
+                    GLES30.GL_FRAMEBUFFER,
+                    GLES30.GL_COLOR_ATTACHMENT0,
                     GL_TEXTURE_2D, textureIddst, 0);
 
             // check status
-            int status = GLES20.glCheckFramebufferStatus(GLES20.GL_FRAMEBUFFER);
-            if (status != GLES20.GL_FRAMEBUFFER_COMPLETE) {
+            int status = GLES30.glCheckFramebufferStatus(GLES30.GL_FRAMEBUFFER);
+            if (status != GLES30.GL_FRAMEBUFFER_COMPLETE) {
                 Log.e(TAG, "glCheckFramebufferStatus error" + status);
             }
         }
 
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, mVBO);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVBO);
 
         // Copy the model / view / projection matrix over.
-        GLES20.glUseProgram(VarifyRender.mProgramExt);
-        GLES20.glViewport(0, 0,
+        GLES30.glUseProgram(VarifyRender.mProgramExt);
+        GLES30.glViewport(0, 0,
                 videoWidth, videoHeight);
         checkGlError("glUseProgram");
-        GLES20.glUniformMatrix4fv(mvpMatrixLocExt, 1, false, IDENTITY_MATRIX, 0);
+        GLES30.glUniformMatrix4fv(mvpMatrixLocExt, 1, false, IDENTITY_MATRIX, 0);
         checkGlError("glUniformMatrix4fv mvpMatrixLoc");
 
         // Copy the texture transformation matrix over.
-        GLES20.glUniformMatrix4fv(texMatrixLocExt, 1, false, IDENTITY_MATRIX, 0);
+        GLES30.glUniformMatrix4fv(texMatrixLocExt, 1, false, IDENTITY_MATRIX, 0);
         checkGlError("glUniformMatrix4fv texMatrixLoc");
 
         // Enable the "aPosition" vertex attribute.
-        GLES20.glEnableVertexAttribArray(positionLocExt);
+        GLES30.glEnableVertexAttribArray(positionLocExt);
         checkGlError("glEnableVertexAttribArray positionLoc");
 
         // Connect vertexBuffer to "aPosition".
-        GLES20.glVertexAttribPointer(positionLocExt, coordsPerVertex,
-                GLES20.GL_FLOAT, false, vertexStride, 0);
+        GLES30.glVertexAttribPointer(positionLocExt, coordsPerVertex,
+                GLES30.GL_FLOAT, false, vertexStride, 0);
         checkGlError("glVertexAttribPointer positionLoc");
 
         // Enable the "aTextureCoord" vertex attribute.
-        GLES20.glEnableVertexAttribArray(textureCoordLocExt);
+        GLES30.glEnableVertexAttribArray(textureCoordLocExt);
         checkGlError("glEnableVertexAttribArray textureCoordLoc");
 
         // Connect texBuffer to "aTextureCoord".
-        GLES20.glVertexAttribPointer(textureCoordLocExt, colorPerVertex,
-                GLES20.GL_FLOAT, false, vertexStride, coordsPerVertex * SIZEOF_FLOAT);
+        GLES30.glVertexAttribPointer(textureCoordLocExt, colorPerVertex,
+                GLES30.GL_FLOAT, false, vertexStride, coordsPerVertex * SIZEOF_FLOAT);
         checkGlError("glVertexAttribPointer textureCoordLoc");
 
 
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT);
-        GLES20.glClearColor(0, 0, 0, 0);
+        GLES30.glClear(GLES30.GL_COLOR_BUFFER_BIT);
+        GLES30.glClearColor(0, 0, 0, 0);
         // connect 'VideoTexture' to video source texture (mTextureID) in texture unit 0.
-        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureId);
+        GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
+        GLES30.glBindTexture(GL_TEXTURE_EXTERNAL_OES, textureId);
 
         // Draw the rect.
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
+        GLES30.glDrawArrays(GLES30.GL_TRIANGLE_STRIP, 0, 4);
         checkGlError("glDrawArrays");
-        GLES20.glFinish();
+        GLES30.glFinish();
         restoreState();
     }
 
@@ -483,26 +482,26 @@ public class GLUtil {
     static int[] previousViewport = new int[4];
     static void saveGLState() {
 
-        previousBlend = GLES20.glIsEnabled(GLES20.GL_BLEND);
-        previousCullFace = GLES20.glIsEnabled(GLES20.GL_CULL_FACE);
-        previousScissorTest = GLES20.glIsEnabled(GLES20.GL_SCISSOR_TEST);
-        previousStencilTest = GLES20.glIsEnabled(GLES20.GL_STENCIL_TEST);
-        previousDepthTest = GLES20.glIsEnabled(GLES20.GL_DEPTH_TEST);
-        previousDither = GLES20.glIsEnabled(GLES20.GL_DITHER);
-        GLES20.glGetIntegerv(GLES20.GL_FRAMEBUFFER_BINDING, glInt, 0);
+        previousBlend = GLES30.glIsEnabled(GLES30.GL_BLEND);
+        previousCullFace = GLES30.glIsEnabled(GLES30.GL_CULL_FACE);
+        previousScissorTest = GLES30.glIsEnabled(GLES30.GL_SCISSOR_TEST);
+        previousStencilTest = GLES30.glIsEnabled(GLES30.GL_STENCIL_TEST);
+        previousDepthTest = GLES30.glIsEnabled(GLES30.GL_DEPTH_TEST);
+        previousDither = GLES30.glIsEnabled(GLES30.GL_DITHER);
+        GLES30.glGetIntegerv(GLES30.GL_FRAMEBUFFER_BINDING, glInt, 0);
         previousFBO = glInt[0];
-        GLES20.glGetIntegerv(GLES20.GL_ARRAY_BUFFER_BINDING, glInt, 0);
+        GLES30.glGetIntegerv(GLES30.GL_ARRAY_BUFFER_BINDING, glInt, 0);
         previousVBO = glInt[0];
-        GLES20.glGetIntegerv(GLES20.GL_VIEWPORT, previousViewport, 0);
+        GLES30.glGetIntegerv(GLES30.GL_VIEWPORT, previousViewport, 0);
         checkGlError("save state");
 
-        GLES20.glDisable(GLES20.GL_BLEND);
-        GLES20.glDisable(GLES20.GL_CULL_FACE);
-        GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
-        GLES20.glDisable(GLES20.GL_STENCIL_TEST);
-        GLES20.glDisable(GLES20.GL_DEPTH_TEST);
-        GLES20.glDisable(GLES20.GL_DITHER);
-        GLES20.glColorMask(true, true, true, true);
+        GLES30.glDisable(GLES30.GL_BLEND);
+        GLES30.glDisable(GLES30.GL_CULL_FACE);
+        GLES30.glDisable(GLES30.GL_SCISSOR_TEST);
+        GLES30.glDisable(GLES30.GL_STENCIL_TEST);
+        GLES30.glDisable(GLES30.GL_DEPTH_TEST);
+        GLES30.glDisable(GLES30.GL_DITHER);
+        GLES30.glColorMask(true, true, true, true);
 
         checkGlError("reset state");
     }
@@ -510,19 +509,19 @@ public class GLUtil {
         // ======Restore state and cleanup.
 //        Log.i(TAG, "restore vbo id :" + previousVBO);
         if (previousFBO > 0) {
-            GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, previousFBO);
+            GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, previousFBO);
         }
 //        if (previousVBO > 0) {
-            GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, previousVBO);
+            GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, previousVBO);
 //        }
-        GLES20.glViewport(previousViewport[0], previousViewport[1],
+        GLES30.glViewport(previousViewport[0], previousViewport[1],
                 previousViewport[2], previousViewport[3]);
-        if (previousBlend) GLES20.glEnable(GLES20.GL_BLEND);
-        if (previousCullFace) GLES20.glEnable(GLES20.GL_CULL_FACE);
-        if (previousScissorTest) GLES20.glEnable(GLES20.GL_SCISSOR_TEST);
-        if (previousStencilTest) GLES20.glEnable(GLES20.GL_STENCIL_TEST);
-        if (previousDepthTest) GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        if (previousDither) GLES20.glEnable(GLES20.GL_DITHER);
+        if (previousBlend) GLES30.glEnable(GLES30.GL_BLEND);
+        if (previousCullFace) GLES30.glEnable(GLES30.GL_CULL_FACE);
+        if (previousScissorTest) GLES30.glEnable(GLES30.GL_SCISSOR_TEST);
+        if (previousStencilTest) GLES30.glEnable(GLES30.GL_STENCIL_TEST);
+        if (previousDepthTest) GLES30.glEnable(GLES30.GL_DEPTH_TEST);
+        if (previousDither) GLES30.glEnable(GLES30.GL_DITHER);
     }
     static int num1 = 0;
     static void saveImg(String name){
@@ -530,9 +529,9 @@ public class GLUtil {
         if (null != mData && num1 == 5)
         {
             mData.position(0);
-            GLES20.glReadPixels(
+            GLES30.glReadPixels(
                     0, 0, sWidth, sHeight,
-                    GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE,
+                    GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE,
                     mData);
             try {
 
@@ -552,21 +551,21 @@ public class GLUtil {
     }
     static public int createExtTextureObject() {
         int[] textures = new int[1];
-        GLES20.glGenTextures(1, textures, 0);
+        GLES30.glGenTextures(1, textures, 0);
         checkGlError("glGenTextures");
 
         int texId = textures[0];
-        GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, texId);
+        GLES30.glBindTexture(GL_TEXTURE_EXTERNAL_OES, texId);
         checkGlError("glBindTexture " + texId);
 
-        GLES20.glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MIN_FILTER,
-                GLES20.GL_LINEAR);
-        GLES20.glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_MAG_FILTER,
-                GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_S,
-                GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES20.GL_TEXTURE_WRAP_T,
-                GLES20.GL_CLAMP_TO_EDGE);
+        GLES30.glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GLES30.GL_TEXTURE_MIN_FILTER,
+                GLES30.GL_LINEAR);
+        GLES30.glTexParameterf(GL_TEXTURE_EXTERNAL_OES, GLES30.GL_TEXTURE_MAG_FILTER,
+                GLES30.GL_LINEAR);
+        GLES30.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES30.GL_TEXTURE_WRAP_S,
+                GLES30.GL_CLAMP_TO_EDGE);
+        GLES30.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES30.GL_TEXTURE_WRAP_T,
+                GLES30.GL_CLAMP_TO_EDGE);
         checkGlError("glTexParameter");
 
         return texId;
@@ -574,112 +573,112 @@ public class GLUtil {
 
     public static int createInerTextureObject() {
         int[] textures = new int[1];
-        GLES20.glGenTextures(1, textures, 0);
+        GLES30.glGenTextures(1, textures, 0);
         checkGlError("glGenTextures");
         int texId = textures[0];
-        GLES20.glBindTexture(GL_TEXTURE_2D, texId);
-        GLES20.glTexParameteri(GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameteri(GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
+        GLES30.glBindTexture(GL_TEXTURE_2D, texId);
+        GLES30.glTexParameteri(GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
+        GLES30.glTexParameteri(GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
+        GLES30.glTexParameteri(GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
+        GLES30.glTexParameteri(GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
 
         return texId;
     }
     public static int createFBO(){
         int[] glInt = new int[1];
-        GLES20.glGenFramebuffers(1,glInt,0);
+        GLES30.glGenFramebuffers(1,glInt,0);
         return glInt[0];
     }
 
     public static int createVBO() {
         int[] glInt = new int[1];
-        GLES20.glGenBuffers(1, glInt, 0);
+        GLES30.glGenBuffers(1, glInt, 0);
         return glInt[0];
     }
     public static int loadShader(int shaderType, String source) {
-        int shader = GLES20.glCreateShader(shaderType);
+        int shader = GLES30.glCreateShader(shaderType);
         checkGlError("glCreateShader type=" + shaderType);
-        GLES20.glShaderSource(shader, source);
-        GLES20.glCompileShader(shader);
+        GLES30.glShaderSource(shader, source);
+        GLES30.glCompileShader(shader);
         int[] compiled = new int[1];
-        GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
+        GLES30.glGetShaderiv(shader, GLES30.GL_COMPILE_STATUS, compiled, 0);
         if (compiled[0] == 0) {
             Log.e(TAG, "Could not compile shader " + shaderType + ":");
-            Log.e(TAG, " " + GLES20.glGetShaderInfoLog(shader));
-            GLES20.glDeleteShader(shader);
+            Log.e(TAG, " " + GLES30.glGetShaderInfoLog(shader));
+            GLES30.glDeleteShader(shader);
             shader = 0;
         }
         return shader;
     }
 
     public static int createProgram(String vertexSource, String fragmentSource) {
-        int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexSource);
+        int vertexShader = loadShader(GLES30.GL_VERTEX_SHADER, vertexSource);
         if (vertexShader == 0) {
             return 0;
         }
-        int pixelShader = loadShader(GLES20.GL_FRAGMENT_SHADER, fragmentSource);
+        int pixelShader = loadShader(GLES30.GL_FRAGMENT_SHADER, fragmentSource);
         if (pixelShader == 0) {
             return 0;
         }
 
-        int program = GLES20.glCreateProgram();
+        int program = GLES30.glCreateProgram();
         checkGlError("glCreateProgram");
         if (program == 0) {
             Log.e(TAG, "Could not create program");
         }
-        GLES20.glAttachShader(program, vertexShader);
+        GLES30.glAttachShader(program, vertexShader);
         checkGlError("glAttachShader");
-        GLES20.glAttachShader(program, pixelShader);
+        GLES30.glAttachShader(program, pixelShader);
         checkGlError("glAttachShader");
-        GLES20.glLinkProgram(program);
+        GLES30.glLinkProgram(program);
         int[] linkStatus = new int[1];
-        GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus, 0);
-        if (linkStatus[0] != GLES20.GL_TRUE) {
+        GLES30.glGetProgramiv(program, GLES30.GL_LINK_STATUS, linkStatus, 0);
+        if (linkStatus[0] != GLES30.GL_TRUE) {
             Log.e(TAG, "Could not link program: ");
-            Log.e(TAG, GLES20.glGetProgramInfoLog(program));
-            GLES20.glDeleteProgram(program);
+            Log.e(TAG, GLES30.glGetProgramInfoLog(program));
+            GLES30.glDeleteProgram(program);
             program = 0;
         }
         return program;
     }
 
     public static void localAttriExt(int programHandle) {
-        positionLocExt = GLES20.glGetAttribLocation(programHandle, "aPosition");
+        positionLocExt = GLES30.glGetAttribLocation(programHandle, "aPosition");
         checkLocation(positionLocExt, "aPosition");
-        textureCoordLocExt = GLES20.glGetAttribLocation(programHandle, "aTextureCoord");
+        textureCoordLocExt = GLES30.glGetAttribLocation(programHandle, "aTextureCoord");
         checkLocation(textureCoordLocExt, "aTextureCoord");
-        mvpMatrixLocExt = GLES20.glGetUniformLocation(programHandle, "uMVPMatrix");
+        mvpMatrixLocExt = GLES30.glGetUniformLocation(programHandle, "uMVPMatrix");
         checkLocation(mvpMatrixLocExt, "uMVPMatrix");
-        texMatrixLocExt= GLES20.glGetUniformLocation(programHandle, "uTexMatrix");
+        texMatrixLocExt= GLES30.glGetUniformLocation(programHandle, "uTexMatrix");
         checkLocation(texMatrixLocExt, "uTexMatrix");
     }
     public static void localAttriInner(int programHandle) {
-        positionLocIn = GLES20.glGetAttribLocation(programHandle, "aPosition");
+        positionLocIn = GLES30.glGetAttribLocation(programHandle, "aPosition");
         checkLocation(positionLocIn, "aPosition");
-        textureCoordLocIn = GLES20.glGetAttribLocation(programHandle, "aTextureCoord");
+        textureCoordLocIn = GLES30.glGetAttribLocation(programHandle, "aTextureCoord");
         checkLocation(textureCoordLocIn, "aTextureCoord");
-        mvpMatrixLocIn = GLES20.glGetUniformLocation(programHandle, "uMVPMatrix");
+        mvpMatrixLocIn = GLES30.glGetUniformLocation(programHandle, "uMVPMatrix");
         checkLocation(mvpMatrixLocIn, "uMVPMatrix");
-        texMatrixLocIn = GLES20.glGetUniformLocation(programHandle, "uTexMatrix");
+        texMatrixLocIn = GLES30.glGetUniformLocation(programHandle, "uTexMatrix");
         checkLocation(texMatrixLocIn, "uTexMatrix");
     }
 
     public static void localAttriAndOthersEhn(int programHandle) {
-        positionLocEhn = GLES20.glGetAttribLocation(programHandle, "aPosition");
+        positionLocEhn = GLES30.glGetAttribLocation(programHandle, "aPosition");
         checkLocation(positionLocEhn, "aPosition Ehn");
-        textureCoordLocEhn = GLES20.glGetAttribLocation(programHandle, "aTextureCoord");
+        textureCoordLocEhn = GLES30.glGetAttribLocation(programHandle, "aTextureCoord");
         checkLocation(textureCoordLocEhn, "aTextureCoord Ehn");
-        mvpMatrixLocEhn = GLES20.glGetUniformLocation(programHandle, "uMVPMatrix");
+        mvpMatrixLocEhn = GLES30.glGetUniformLocation(programHandle, "uMVPMatrix");
         checkLocation(mvpMatrixLocEhn, "uMVPMatrix Ehn");
-        texMatrixLocEhn = GLES20.glGetUniformLocation(programHandle, "uTexMatrix");
+        texMatrixLocEhn = GLES30.glGetUniformLocation(programHandle, "uTexMatrix");
         checkLocation(texMatrixLocEhn, "uTexMatrix Ehn");
-        dxLoc = GLES20.glGetUniformLocation(programHandle, "dx");
+        dxLoc = GLES30.glGetUniformLocation(programHandle, "dx");
         checkLocation(dxLoc, "dx Ehn");
-        dyLoc = GLES20.glGetUniformLocation(programHandle, "dy");
+        dyLoc = GLES30.glGetUniformLocation(programHandle, "dy");
         checkLocation(dyLoc, "dy Ehn");
     }
 
@@ -695,8 +694,8 @@ public class GLUtil {
 
 
     public static void checkGlError(String op) {
-        int error = GLES20.glGetError();
-        if (error != GLES20.GL_NO_ERROR) {
+        int error = GLES30.glGetError();
+        if (error != GLES30.GL_NO_ERROR) {
             String msg = op + ": glError 0x" + Integer.toHexString(error);
             Log.e(TAG, msg);
             throw new RuntimeException(msg);

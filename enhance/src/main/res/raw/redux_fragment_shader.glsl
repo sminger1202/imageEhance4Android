@@ -1,26 +1,32 @@
-precision mediump float;
-varying vec2 textureCoordinate;
+#version 300 es
+#define OPS(x,y) yourMethod
+precision highp float;
 uniform sampler2D textureImg;
-uniform float dx;
-uniform float dy;
+out vec4 glfragColor;
+
 void main() {
+
     vec4  color;
-    vec2 coords = 2.0 * textureCoordinate;
 
-    vec4  color00 = texture2D(textureImg, coords);
+    ivec2 size = textureSize(textureImg, 0);
 
-    vec4  color01 = texture2D(textureImg, coords + vec2(dx,  0.0));
+    ivec2 texelCoords = ivec2(gl_FragCoord) * 2 ;
 
-    vec4  color10 = texture2D(textureImg, coords + vec2(0.0, dy));
+    vec4  color00 = texelFetch(textureImg, texelCoords, 0);
 
-    vec4  color11 = texture2D(textureImg, coords + vec2(dx,  dy));
+    vec4  color01 = texelFetch(textureImg, texelCoords + ivec2(0, 1), 0);
 
-//    ___REDUX_OPERATION___;
-    color = max(color00, color10);
-    color = max(color, color01);
-    color = max(color, color11);
-    color = (coords == vec2(1.0, 1.0)) ? color00 : color;
+    vec4  color10 = texelFetch(textureImg, texelCoords + ivec2(1, 0), 0);
 
-    gl_FragColor = vec4(color.xyz, 0.4);
+    vec4  color11 = texelFetch(textureImg, texelCoords + ivec2(1, 1), 0);
 
+___REDUX_OPERATION___
+
+    color = size.x == texelCoords.x + 1 ?
+    size.y == texelCoords.y + 1 ? color00 : OPS(color00, color01) :
+    size.y == texelCoords.y + 1 ? OPS(color00, color10) : color;
+
+    glfragColor = vec4(color.xyz, 0);
 }
+
+

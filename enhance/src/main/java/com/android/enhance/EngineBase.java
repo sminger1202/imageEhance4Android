@@ -1,14 +1,14 @@
 package com.android.enhance;
 
 import android.content.Context;
-import android.opengl.GLES20;
+import android.opengl.GLES30;
 import android.util.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import static android.opengl.GLES20.GL_TEXTURE_2D;
+import static android.opengl.GLES30.GL_TEXTURE_2D;
 
 /**
  * Created by shiming on 2017/5/25.
@@ -16,7 +16,7 @@ import static android.opengl.GLES20.GL_TEXTURE_2D;
 
 public abstract class EngineBase implements IEngine{
 
-    final String TAG = "EngineBase";
+    public String TAG = "EngineBase";
 
     protected static final int FLOAT_SIZE_BYTES = 4;
 //    protected float[] mTriangleVerticesData = {
@@ -101,15 +101,15 @@ public abstract class EngineBase implements IEngine{
         return null;
     }
     private int loadShader(int shaderType, String source) {
-        int shader = GLES20.glCreateShader(shaderType);
+        int shader = GLES30.glCreateShader(shaderType);
         if (shader != 0) {
-            GLES20.glShaderSource(shader, source);
-            GLES20.glCompileShader(shader);
+            GLES30.glShaderSource(shader, source);
+            GLES30.glCompileShader(shader);
             int[] compiled = new int[1];
-            GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
+            GLES30.glGetShaderiv(shader, GLES30.GL_COMPILE_STATUS, compiled, 0);
             if (compiled[0] == 0) {
-                String info = GLES20.glGetShaderInfoLog(shader);
-                GLES20.glDeleteShader(shader);
+                String info = GLES30.glGetShaderInfoLog(shader);
+                GLES30.glDeleteShader(shader);
                 shader = 0;
                 Log.e(TAG, " :Could not compile shader " +
                         shaderType + ":" + info);
@@ -121,31 +121,31 @@ public abstract class EngineBase implements IEngine{
     }
 
     private int createProgram() {
-        int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, getVertexSource());
+        int vertexShader = loadShader(GLES30.GL_VERTEX_SHADER, getVertexSource());
         if (vertexShader == 0) {
             Log.e(TAG, "load vertexShader failed.");
             return 0;
         }
-        int pixelShader = loadShader(GLES20.GL_FRAGMENT_SHADER, getfragmentSource());
+        int pixelShader = loadShader(GLES30.GL_FRAGMENT_SHADER, getfragmentSource());
         if (pixelShader == 0) {
 
             Log.e(TAG, "load pixelShader failed.");
             return 0;
         }
 
-        int program = GLES20.glCreateProgram();
+        int program = GLES30.glCreateProgram();
         if (program != 0) {
-            GLES20.glAttachShader(program, vertexShader);
+            GLES30.glAttachShader(program, vertexShader);
             checkGlError("glAttachShader");
-            GLES20.glAttachShader(program, pixelShader);
+            GLES30.glAttachShader(program, pixelShader);
             checkGlError("glAttachShader");
-            GLES20.glLinkProgram(program);
+            GLES30.glLinkProgram(program);
             int[] linkStatus = new int[1];
-            GLES20.glGetProgramiv(program, GLES20.GL_LINK_STATUS, linkStatus,
+            GLES30.glGetProgramiv(program, GLES30.GL_LINK_STATUS, linkStatus,
                     0);
-            if (linkStatus[0] != GLES20.GL_TRUE) {
-                String info = GLES20.glGetProgramInfoLog(program);
-                GLES20.glDeleteProgram(program);
+            if (linkStatus[0] != GLES30.GL_TRUE) {
+                String info = GLES30.glGetProgramInfoLog(program);
+                GLES30.glDeleteProgram(program);
                 program = 0;
                 Log.e(TAG, info);
                 throw new RuntimeException("Could not link program: " + info);
@@ -156,7 +156,8 @@ public abstract class EngineBase implements IEngine{
 
     protected void checkGlError(String op) {
         int error;
-        while ((error = GLES20.glGetError()) != GLES20.GL_NO_ERROR) {
+        while ((error = GLES30.glGetError()) != GLES30.GL_NO_ERROR) {
+            Log.e(TAG, "check GL Error "+ op + " in program");
             throw new RuntimeException(op + ": glError " + error);
         }
     }
@@ -180,71 +181,71 @@ public abstract class EngineBase implements IEngine{
 
     public int createInnerTextureObject() {
         int[] textures = new int[1];
-        GLES20.glGenTextures(1, textures, 0);
+        GLES30.glGenTextures(1, textures, 0);
         checkGlError("glGenTextures");
         int texId = textures[0];
-        GLES20.glBindTexture(GL_TEXTURE_2D, texId);
-        GLES20.glTexParameteri(GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameteri(GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glBindTexture(GL_TEXTURE_2D, 0);
+        GLES30.glBindTexture(GL_TEXTURE_2D, texId);
+        GLES30.glTexParameteri(GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
+        GLES30.glTexParameteri(GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
+        GLES30.glTexParameteri(GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_WRAP_S, GLES30.GL_CLAMP_TO_EDGE);
+        GLES30.glTexParameteri(GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_WRAP_T, GLES30.GL_CLAMP_TO_EDGE);
+        GLES30.glBindTexture(GL_TEXTURE_2D, 0);
         return texId;
     }
 
     protected void initTexParams() {
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S,
-                GLES20.GL_CLAMP_TO_EDGE);
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T,
-                GLES20.GL_CLAMP_TO_EDGE);
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_MAG_FILTER, GLES30.GL_LINEAR);
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D,
+                GLES30.GL_TEXTURE_MIN_FILTER, GLES30.GL_LINEAR);
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_S,
+                GLES30.GL_CLAMP_TO_EDGE);
+        GLES30.glTexParameteri(GLES30.GL_TEXTURE_2D, GLES30.GL_TEXTURE_WRAP_T,
+                GLES30.GL_CLAMP_TO_EDGE);
     }
     void saveGLState() {
 
-        previousBlend = GLES20.glIsEnabled(GLES20.GL_BLEND);
-        previousCullFace = GLES20.glIsEnabled(GLES20.GL_CULL_FACE);
-        previousScissorTest = GLES20.glIsEnabled(GLES20.GL_SCISSOR_TEST);
-        previousStencilTest = GLES20.glIsEnabled(GLES20.GL_STENCIL_TEST);
-        previousDepthTest = GLES20.glIsEnabled(GLES20.GL_DEPTH_TEST);
-        previousDither = GLES20.glIsEnabled(GLES20.GL_DITHER);
-        GLES20.glGetIntegerv(GLES20.GL_FRAMEBUFFER_BINDING, glInt, 0);
+        previousBlend = GLES30.glIsEnabled(GLES30.GL_BLEND);
+        previousCullFace = GLES30.glIsEnabled(GLES30.GL_CULL_FACE);
+        previousScissorTest = GLES30.glIsEnabled(GLES30.GL_SCISSOR_TEST);
+        previousStencilTest = GLES30.glIsEnabled(GLES30.GL_STENCIL_TEST);
+        previousDepthTest = GLES30.glIsEnabled(GLES30.GL_DEPTH_TEST);
+        previousDither = GLES30.glIsEnabled(GLES30.GL_DITHER);
+        GLES30.glGetIntegerv(GLES30.GL_FRAMEBUFFER_BINDING, glInt, 0);
         previousFBO = glInt[0];
-        GLES20.glGetIntegerv(GLES20.GL_ARRAY_BUFFER_BINDING, glInt, 0);
+        GLES30.glGetIntegerv(GLES30.GL_ARRAY_BUFFER_BINDING, glInt, 0);
         previousVBO = glInt[0];
-        GLES20.glGetIntegerv(GLES20.GL_VIEWPORT, previousViewport, 0);
+        GLES30.glGetIntegerv(GLES30.GL_VIEWPORT, previousViewport, 0);
 
         checkGlError("save state");
 
-        GLES20.glDisable(GLES20.GL_BLEND);
-        GLES20.glDisable(GLES20.GL_CULL_FACE);
-        GLES20.glDisable(GLES20.GL_SCISSOR_TEST);
-        GLES20.glDisable(GLES20.GL_STENCIL_TEST);
-        GLES20.glDisable(GLES20.GL_DEPTH_TEST);
-        GLES20.glDisable(GLES20.GL_DITHER);
-        GLES20.glColorMask(true, true, true, true);
+        GLES30.glDisable(GLES30.GL_BLEND);
+        GLES30.glDisable(GLES30.GL_CULL_FACE);
+        GLES30.glDisable(GLES30.GL_SCISSOR_TEST);
+        GLES30.glDisable(GLES30.GL_STENCIL_TEST);
+        GLES30.glDisable(GLES30.GL_DEPTH_TEST);
+        GLES30.glDisable(GLES30.GL_DITHER);
+        GLES30.glColorMask(true, true, true, true);
 
         checkGlError("reset state");
     }
     void restoreState() {
         // ======Restore state and cleanup.
 
-        GLES20.glBindFramebuffer(GLES20.GL_FRAMEBUFFER, previousFBO);
-        GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, previousVBO);
-        GLES20.glViewport(previousViewport[0], previousViewport[1],
+        GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, previousFBO);
+        GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, previousVBO);
+        GLES30.glViewport(previousViewport[0], previousViewport[1],
                 previousViewport[2], previousViewport[3]);
-        if (previousBlend) GLES20.glEnable(GLES20.GL_BLEND);
-        if (previousCullFace) GLES20.glEnable(GLES20.GL_CULL_FACE);
-        if (previousScissorTest) GLES20.glEnable(GLES20.GL_SCISSOR_TEST);
-        if (previousStencilTest) GLES20.glEnable(GLES20.GL_STENCIL_TEST);
-        if (previousDepthTest) GLES20.glEnable(GLES20.GL_DEPTH_TEST);
-        if (previousDither) GLES20.glEnable(GLES20.GL_DITHER);
+        if (previousBlend) GLES30.glEnable(GLES30.GL_BLEND);
+        if (previousCullFace) GLES30.glEnable(GLES30.GL_CULL_FACE);
+        if (previousScissorTest) GLES30.glEnable(GLES30.GL_SCISSOR_TEST);
+        if (previousStencilTest) GLES30.glEnable(GLES30.GL_STENCIL_TEST);
+        if (previousDepthTest) GLES30.glEnable(GLES30.GL_DEPTH_TEST);
+        if (previousDither) GLES30.glEnable(GLES30.GL_DITHER);
     }
 
     @Override

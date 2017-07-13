@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.opengl.GLSurfaceView;
-import android.opengl.GLUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;

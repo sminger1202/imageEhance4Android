@@ -1,12 +1,9 @@
 package com.android.enhance;
-
 import android.content.Context;
 import android.opengl.GLES20;
 import android.util.Log;
-
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-
 import static android.opengl.GLES20.GL_TEXTURE_2D;
 
 /**
@@ -34,6 +31,7 @@ public class DragoTMO extends EngineBase {
     byte[] byteData;
     ByteBuffer byteBuffer;
     DragoTMO(Context context) {
+        TAG = this.getClass().getSimpleName();
         init(context);
     }
     @Override
@@ -138,13 +136,20 @@ public class DragoTMO extends EngineBase {
             value[1] = (Min + 1) / 256.f;
 //            Log.d(TAG, "byte data[" + i + "] : " + byteData[i]);
         }
-        Log.d(TAG, "MaxMinValue max, min :" + Max + "," + Min + "," + value[0]+ "," + value[1]);
+//        Log.d(TAG, "MaxMinValue max, min :" + Max + "," + Min + "," + value[0]+ "," + value[1]);
         restoreState();
     }
     private void getMaxMinGL(int textureID, float[] value) {
-        float[] tmp = mRedux.getMinValue(textureID, mWidth, mHeight, 4);
-        value[0] = tmp[3];
-        value[1] = tmp[3];
+        float[] tmp;
+//        tmp = mRedux.getMeanValue(
+//                textureID, mWidth, mHeight, 4);
+//        tmp = mRedux.getMinValue(
+//                textureID, mWidth, mHeight, 4);
+        tmp = mRedux.getMaxValue(
+                textureID, mWidth, mHeight, 4);
+        value[0] = tmp[0];
+        value[1] = tmp[0];
+        Log.d(TAG, "MaxMinValue max, mean :"  +  value[0]+ "," + value[1]);
     }
     @Override
     public void apply(int srcTextureId, int dstTextureId, int width, int height) {
@@ -152,11 +157,11 @@ public class DragoTMO extends EngineBase {
             mWidth = width;
             mHeight = height;
 
-//            byteBuffer = ByteBuffer.allocateDirect(mWidth * mHeight * 4);
-//            byteData = new byte[mWidth * mHeight * 4];
-//
-//            floatBuffer = FloatBuffer.allocate(mWidth * mHeight * 4);
-//            floatData = new float[mWidth * mHeight * 4];
+            byteBuffer = ByteBuffer.allocateDirect(mWidth * mHeight * 4);
+            byteData = new byte[mWidth * mHeight * 4];
+
+            floatBuffer = FloatBuffer.allocate(mWidth * mHeight * 4);
+            floatData = new float[mWidth * mHeight * 4];
         }
         mLuminance.apply(srcTextureId, mLumTextureId, width, height);
 //        getMaxMin(mLumTextureId, mMaxMin);
@@ -173,5 +178,7 @@ public class DragoTMO extends EngineBase {
         int[] textures = new int[1];
         textures[0] = mLumTextureId;
         GLES20.glDeleteTextures(1, textures, 0);
+        mLuminance.release();
+        mDrago.release();
     }
 }
