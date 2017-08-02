@@ -3,9 +3,7 @@ package com.android.enhance;
 import android.content.Context;
 import android.opengl.GLES30;
 import android.util.Log;
-
 import com.android.enhance.utils.TextResourceReader;
-
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
 import static android.opengl.GLES30.GL_TEXTURE_2D;
 
@@ -14,7 +12,6 @@ import static android.opengl.GLES30.GL_TEXTURE_2D;
  */
 
 public class DragoEngine extends EngineBase {
-
     private int mvpMatrixLoc;
     private int texMatrixLoc;
     private int positionLoc;
@@ -26,6 +23,7 @@ public class DragoEngine extends EngineBase {
     private float LMax;
     private float Lwa;
     DragoEngine(Context context) {
+        EngineName = CVFactory.DRAGO;
         init(context);
     }
     @Override

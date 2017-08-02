@@ -5,3 +5,5 @@
 imageEhance4Android.iml
 previewcamera.iml
 /captures
+libs/
+src/main/res/drawable/

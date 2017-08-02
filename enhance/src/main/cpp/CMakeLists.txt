@@ -11,15 +11,15 @@ target_link_libraries(shader
                       android
                       log)
 
-add_library(Engine SHARED
-            EnhanceInterface.cpp
-            platformCL.cpp
-            platformGL.cpp)
+# add_library(Engine SHARED
+#            EnhanceInterface.cpp
+#            platformCL.cpp
+#            platformGL.cpp)
 
-target_link_libraries(Engine
-                        OpenCL
-                        EGL
-                        GLESv2
-                        shader
-                        android
-                        log)
+# target_link_libraries(Engine
+#                        OpenCL
+#                        EGL
+#                        GLESv2
+#                        shader
+#                        android
+#                        log)

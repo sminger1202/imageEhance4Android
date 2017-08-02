@@ -3,9 +3,7 @@ package com.android.enhance;
 import android.content.Context;
 import android.opengl.GLES30;
 import android.util.Log;
-
 import com.android.enhance.utils.TextResourceReader;
-
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
 import static android.opengl.GLES30.GL_TEXTURE_2D;
 
@@ -23,6 +21,7 @@ public class LuminanceEngine extends EngineBase {
     }
     @Override
     public void init(Context context){
+        EngineName = CVFactory.LUMINANCE;
         super.init(context);
         coordsPerVertex = 2;
         colorPerVertex = 2;

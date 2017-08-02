@@ -1,12 +1,7 @@
 package com.android.enhance;
-
-
 import android.content.Context;
 import android.opengl.GLES30;
 import android.util.Log;
-
-import com.android.enhance.utils.TextResourceReader;
-
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
 import static android.opengl.GLES30.GL_TEXTURE_2D;
 
@@ -16,7 +11,6 @@ import static android.opengl.GLES30.GL_TEXTURE_2D;
 
 public class EnhanceEngine extends EngineBase{
     String TAG = this.getClass().getSimpleName();
-
     private int dxLoc = -1;
     private int dyLoc = -1;
     private int coefLoc = -1;
@@ -30,6 +24,7 @@ public class EnhanceEngine extends EngineBase{
     private float coef = 1.f;
 
     public EnhanceEngine(Context context){
+        EngineName = CVFactory.ENHANCE;
         init(context);
     }
     @Override
@@ -206,13 +201,15 @@ public class EnhanceEngine extends EngineBase{
 
     @Override
     protected String getVertexSource() {
-        return TextResourceReader.readTextFileFromResource(mContext,R.raw.enhance_vertex_shader);
-//        return getVertexShader();
+//        return TextResourceReader.readTextFileFromResource(mContext,R.raw.enhance_vertex_shader);
+        return getVertexShader();
+//        return getVertexShader("enhance");
     }
     @Override
     protected String getfragmentSource() {
-        return TextResourceReader.readTextFileFromResource(mContext, R.raw.enhance_fragment_shader);
-//        return getFragmentShader();
+//        return TextResourceReader.readTextFileFromResource(mContext, R.raw.enhance_fragment_shader);
+        return getFragmentShader();
+//        return getFragmentShader("enhance");
     }
 
     @Override
@@ -233,11 +230,5 @@ public class EnhanceEngine extends EngineBase{
             GLES30.glDeleteProgram(mProgram);
             mProgram = -1;
         }
-    }
-
-    public static native String getVertexShader();
-    public static native String getFragmentShader();
-    static {
-        System.loadLibrary("shader");
     }
 }

@@ -3,7 +3,7 @@ package com.android.enhance;
 import android.content.Context;
 import android.opengl.GLES30;
 import android.util.Log;
-
+import com.android.enhance.utils.SharderContainer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -17,22 +17,23 @@ import static android.opengl.GLES30.GL_TEXTURE_2D;
 public abstract class EngineBase implements IEngine{
 
     public String TAG = "EngineBase";
+    protected String EngineName= "notset";
 
     protected static final int FLOAT_SIZE_BYTES = 4;
-//    protected float[] mTriangleVerticesData = {
-//            // X, Y, U, V
-//            -1.0f, -1.0f, 0.f, 1.f,
-//            1.0f, -1.0f, 1.f, 1.f,
-//            -1.0f, 1.0f, 0.f, 0.f,
-//            1.0f, 1.0f, 1.f, 0.f,
-//    };
     protected float[] mTriangleVerticesData = {
             // X, Y, U, V
-            -1.0f, -1.0f, 0.f, 0.f,
-            1.0f, -1.0f, 1.f, 0.f,
-            -1.0f, 1.0f, 0.f, 1.f,
-            1.0f, 1.0f, 1.f, 1.f,
+            -1.0f, -1.0f, 0.f, 1.f,
+            1.0f, -1.0f, 1.f, 1.f,
+            -1.0f, 1.0f, 0.f, 0.f,
+            1.0f, 1.0f, 1.f, 0.f,
     };
+//    protected float[] mTriangleVerticesData = {
+//            // X, Y, U, V
+//            -1.0f, -1.0f, 0.f, 0.f,
+//            1.0f, -1.0f, 1.f, 0.f,
+//            -1.0f, 1.0f, 0.f, 1.f,
+//            1.0f, 1.0f, 1.f, 1.f,
+//    };
     protected float mvpMatrix[] = {
             1.0f, 0.f, 0.f, 0.f,
             0.f, 1.f, 0.f, 0.f,
@@ -248,6 +249,13 @@ public abstract class EngineBase implements IEngine{
         if (previousDither) GLES30.glEnable(GLES30.GL_DITHER);
     }
 
+    public String getVertexShader() {
+        Log.i(TAG, "current engine name :" + EngineName);
+        return SharderContainer.getVertexShader(EngineName);
+    }
+    public String getFragmentShader() {
+        return SharderContainer.getFragmentShader(EngineName);
+    }
     @Override
     public abstract void release();
 }

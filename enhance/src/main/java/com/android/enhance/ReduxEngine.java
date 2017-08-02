@@ -14,7 +14,6 @@ import static android.opengl.GLES30.GL_TEXTURE_2D;
  */
 
 public class ReduxEngine extends EngineBase {
-
     private int positionLoc;
 
     private final int VALUE_MAX = 0;
@@ -39,6 +38,7 @@ public class ReduxEngine extends EngineBase {
 
     public ReduxEngine(Context context) {
         TAG = ReduxEngine.class.getSimpleName();
+        EngineName = CVFactory.REDUX;
         mContext = context;//这里必须初始化上下文，否则手动调用init的时候会有问题
     }
 

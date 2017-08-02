@@ -31,6 +31,7 @@ public class DragoTMO extends EngineBase {
     byte[] byteData;
     ByteBuffer byteBuffer;
     DragoTMO(Context context) {
+        EngineName = CVFactory.DRAGOTMO;
         TAG = this.getClass().getSimpleName();
         init(context);
     }

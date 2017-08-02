@@ -115,7 +115,7 @@ public class GLUtil {
 
     static public boolean sIsOpenClPrepared = false;
     static public boolean sIsOpenGlPrepared = false;
-    static public boolean sIsEnhance = false;
+    static public boolean sIsEnhance = true;
     static public boolean sWithCopy = false;
     static int dxLoc;
     static int dyLoc;
@@ -310,8 +310,8 @@ public class GLUtil {
     }
 
     static public void copyEnhance(int srcTextureId, int dstTextureId, int width, int height) {
-//        VarifyRender.mEnhanceEngine.apply(srcTextureId, dstTextureId, width, height);
-        VarifyRender.mDragoTMO.apply(srcTextureId, dstTextureId, width, height);
+        VarifyRender.mEnhanceEngine.apply(srcTextureId, dstTextureId, width, height);
+//        VarifyRender.mDragoTMO.apply(srcTextureId, dstTextureId, width, height);
 //        VarifyRender.mLuminance.apply(srcTextureId, dstTextureId, width, height);
         glFinish();
     }
