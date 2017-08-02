@@ -15,26 +15,18 @@
  */
 package com.example.hellojni;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.os.Debug;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.MediaController;
-import android.opengl.GLUtils;
 
-//VarifyRender|VideoPreviewView
 public class EnhanceActivity extends AppCompatActivity {
     final String TAG = getClass().getSimpleName();
     private VideoPreviewView mPreviewView;

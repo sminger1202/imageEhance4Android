@@ -3,7 +3,6 @@
 //
 
 #include <jni.h>
-#include <cstring>
 #include "utils.h"
 const char* TAG="shader";
 
@@ -72,15 +71,15 @@ JNI_OnLoad(JavaVM *jvm, void *reserved)
 JNIEXPORT void JNICALL
 JNI_OnUnLoad(JavaVM *jvm, void *reserved)
 {
-JNIEnv *env = NULL;
-if ((jvm)->GetEnv( (void**)&env, JNI_VERSION_1_6)){
-return;
-}
-jclass cls = (env)->FindClass( "com/android/enhance/EnhanceEngine");
-if (cls == NULL)
-{
-return;
-}
-jint nRes = (env)->UnregisterNatives(cls);
-return;
+    JNIEnv *env = NULL;
+    if ((jvm)->GetEnv( (void**)&env, JNI_VERSION_1_6)){
+        return;
+    }
+    jclass cls = (env)->FindClass( "com/android/enhance/EnhanceEngine");
+    if (cls == NULL)
+    {
+        return;
+    }
+    jint nRes = (env)->UnregisterNatives(cls);
+    return;
 }

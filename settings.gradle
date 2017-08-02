@@ -1,1 +1,2 @@
-include ':app', ':enhance', ':playerdemo', ':previewcamera'
+include ':app', ':enhance', ':playerdemo', ':previewcamera', ':xpose', ':showimg',  ':accessibility'
+

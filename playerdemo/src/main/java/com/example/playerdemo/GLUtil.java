@@ -33,14 +33,20 @@ public class GLUtil {
                     "void main() {\n" +
                     "    gl_Position = uMVPMatrix * aPosition;\n" +
                     "    vTextureCoord = (uTexMatrix * aTextureCoord).xy;\n" +
+                    " //   vPosition = gl_Position;\n" +
                     "}\n";
     public static final String FRAGMENT_SHADER_INNER =
-            "#extension GL_OES_EGL_image_external : require\n" +
-                    "precision mediump float;\n" +
-                    "varying vec2 vTextureCoord;\n" +
-                    "uniform sampler2D  sTexture;\n" +
-                    "void main() {\n" +
-                    "    gl_FragColor = texture2D(sTexture, vTextureCoord);\n" +
+            "#extension GL_OES_EGL_image_external : require                                      \n" +
+                    "precision mediump float;                                                    \n" +
+                    "varying vec2 vTextureCoord;                                                 \n" +
+                    "uniform sampler2D  sTexture;                                                \n" +
+                    "void main() {                                                               \n" +
+                    "    if(vTextureCoord.x < 0.5) {                                                   \n" +
+                    "         gl_FragColor = texture2D(sTexture, vec2(2.0, 1.0) * vTextureCoord);\n" +
+                    "    } else {                                                                \n" +
+                    "         gl_FragColor = texture2D(sTexture, vec2(2.0, 1.0) * (vTextureCoord - vec2(0.5, 0.0)));\n" +
+                    "   }                                                                        \n" +
+                    "   //gl_FragColor = texture2D(sTexture,  vec2(2.0, 1.0) * vTextureCoord);\n" +
                     "}\n";
     public static final String FRAGMENT_SHADER_EXT =
             "#extension GL_OES_EGL_image_external : require\n" +
@@ -90,6 +96,11 @@ public class GLUtil {
     static {
         IDENTITY_MATRIX = new float[16];
         Matrix.setIdentityM(IDENTITY_MATRIX, 0);
+//        IDENTITY_MATRIX[0] = 0.5f;
+//        IDENTITY_MATRIX[5] = 0.5f;
+//        IDENTITY_MATRIX[10] = 0.5f;
+//        IDENTITY_MATRIX[1] = 0.7f;
+//        IDENTITY_MATRIX[4] = 0.7f;
     }
 
     static int mvpMatrixLocExt;
@@ -249,7 +260,7 @@ public class GLUtil {
 //                videoWidth, videoHeight);
 
         GLES30.glViewport(0, 0,
-                sWidth, sHeight);
+                sWidth , sHeight);
 
         GLES30.glUniformMatrix4fv(mvpMatrixLocIn, 1, false, mvpMatrix, 0);
         checkGlError("glUniformMatrix4fv mvpMatrixLoc");
@@ -566,6 +577,16 @@ public class GLUtil {
                 GLES30.GL_CLAMP_TO_EDGE);
         GLES30.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES30.GL_TEXTURE_WRAP_T,
                 GLES30.GL_CLAMP_TO_EDGE);
+
+//        GLES30.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES30.GL_TEXTURE_SWIZZLE_R,
+//                GLES30.GL_RED);
+//
+//        GLES30.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES30.GL_TEXTURE_SWIZZLE_B,
+//                GLES30.GL_ZERO);
+//
+//        GLES30.glTexParameteri(GL_TEXTURE_EXTERNAL_OES, GLES30.GL_TEXTURE_SWIZZLE_G,
+//                GLES30.GL_ZERO);
+
         checkGlError("glTexParameter");
 
         return texId;

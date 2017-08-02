@@ -111,13 +111,13 @@ public class VarifyRender implements GLSurfaceView.Renderer,
              */
 
 //
-            GLUtil.drawWithCopy( GLUtil.IDENTITY_MATRIX, GLUtil.vertexArray, 0, GLUtil.vertexCount,
-                    GLUtil.coordsPerVertex, GLUtil.vertexStride, this.transform, GLUtil.texCoordArray,
-                    mTextureId, GLUtil.texCoordStride, mTextureIdEnhance);
+//            GLUtil.drawWithCopy( GLUtil.IDENTITY_MATRIX, GLUtil.vertexArray, 0, GLUtil.vertexCount,
+//                    GLUtil.coordsPerVertex, GLUtil.vertexStride, this.transform, GLUtil.texCoordArray,
+//                    mTextureId, GLUtil.texCoordStride, mTextureIdEnhance);
             /**
              * 播放测试
              */
-//            GLUtil.draw(mProgramExt, GLUtil.IDENTITY_MATRIX, this.transform, mTextureId);
+            GLUtil.draw(mProgramExt, GLUtil.IDENTITY_MATRIX, this.transform, mTextureId);
         }
     }
 
@@ -135,7 +135,6 @@ public class VarifyRender implements GLSurfaceView.Renderer,
 
     public void startPreview() {
         try {
-
             mPlayer.setDataSource("/sdcard/testfile.mp4");
 //            mPlayer.setDataSource(GLUtil.videoPath);
 //            mPlayer.setDataSource("/sdcard/2014国际足联球迷庆典.mp4");

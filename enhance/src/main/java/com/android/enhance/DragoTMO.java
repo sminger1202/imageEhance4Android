@@ -167,12 +167,14 @@ public class DragoTMO extends EngineBase {
 //        getMaxMin(mLumTextureId, mMaxMin);
         getMaxMinGL(mLumTextureId, mMaxMin);
         int[] InputTextures = {srcTextureId, mLumTextureId};
-        updata(mLdMax, mBias, mMaxMin[0], mMaxMin[0] ) ;
+//        updata(mLdMax, mBias, mMaxMin[0], mMaxMin[0] ) ;
+
+        updata(mLdMax, mBias, 8.f, 0.2f ) ;
         float[] pars = { constant1, constant2, Lw_Max_scaled, Lw_a_scaled};
         mDrago.setParameters(0, pars);
         mDrago.apply(InputTextures, dstTextureId, width, height);
-
     }
+
     @Override
     public void release() {
         int[] textures = new int[1];

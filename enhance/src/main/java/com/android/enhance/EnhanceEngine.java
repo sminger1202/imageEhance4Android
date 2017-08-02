@@ -53,7 +53,7 @@ public class EnhanceEngine extends EngineBase{
         checkLocation(mvpMatrixLocEhn, "uMVPMatrix Ehn");
         texMatrixLocEhn = GLES30.glGetUniformLocation(mProgram, "uTexMatrix");
         checkLocation(texMatrixLocEhn, "uTexMatrix Ehn");
-//
+
 //        dxLoc = GLES30.glGetUniformLocation(mProgram, "dx");
 //        checkLocation(dxLoc, "dx Ehn");
 //        dyLoc = GLES30.glGetUniformLocation(mProgram, "dy");
