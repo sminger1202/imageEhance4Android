@@ -37,5 +37,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha7'
     testCompile 'junit:junit:4.12'
 //    compile (name :'enhance-release',ext:'aar')
-    compile project(":enhance")
+//    compile project(":enhance")
+    compile 'com.sminger:enhance:1.0.0'
 }
