@@ -50,8 +50,8 @@ public abstract class EngineBase implements IEngine{
 
     protected Context mContext;
     protected java.nio.FloatBuffer mTriangleVertices;
-    protected int mFBO;
-    protected int mVBO;
+    protected int mFBO = -1;
+    protected int mVBO = -1;
     protected int mWidth = 0;
     protected int mHeight = 0;
     protected int mChannels = 0;

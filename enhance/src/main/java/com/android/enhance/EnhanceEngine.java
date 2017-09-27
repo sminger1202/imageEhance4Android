@@ -67,9 +67,12 @@ public class EnhanceEngine extends EngineBase{
 
     @Override
     public void setParameters(int field, float[] value) {
+        Log.d(TAG, "set Pars"  + value);
         if (field == IEngine.EFFECT_MVP) {
-            mTriangleVerticesData = value;
-            initFBO();
+            for (int i = 0; i < value.length; ++i) {
+                mTriangleVerticesData[i] = value[i];
+            }
+            initVBO();
         }
     }
 
@@ -82,6 +85,12 @@ public class EnhanceEngine extends EngineBase{
 
     @Override
     protected void initVBO() {
+        if (mVBO >= 0) {
+            int[] dd = new int[1];
+            dd[0] = mVBO;
+            GLES30.glDeleteBuffers(1,dd, 0 );
+            mVBO = -1;
+        }
         int[] glInt = new int[1];
         GLES30.glGenBuffers(1, glInt, 0);
         mVBO = glInt[0];

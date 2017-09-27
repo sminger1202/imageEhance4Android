@@ -4,6 +4,8 @@ import android.opengl.GLES30;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import com.android.enhance.IEngine;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -308,8 +310,12 @@ public class GLUtil {
         GLES30.glFinish();
         isChanged = false;
     }
-
+static boolean setflag = false;
     static public void copyEnhance(int srcTextureId, int dstTextureId, int width, int height) {
+        if(!setflag) {
+            VarifyRender.mEnhanceEngine.setParameters(IEngine.EFFECT_MVP, VERTICES_DATA);
+            setflag = true;
+        }
         VarifyRender.mEnhanceEngine.apply(srcTextureId, dstTextureId, width, height);
 //        VarifyRender.mDragoTMO.apply(srcTextureId, dstTextureId, width, height);
 //        VarifyRender.mLuminance.apply(srcTextureId, dstTextureId, width, height);
