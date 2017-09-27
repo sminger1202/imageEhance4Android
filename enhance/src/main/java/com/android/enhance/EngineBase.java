@@ -18,6 +18,7 @@ public abstract class EngineBase implements IEngine{
 
     public String TAG = "EngineBase";
     protected String EngineName= "notset";
+    protected boolean mIsInnerTexture = false;
 
     protected static final int FLOAT_SIZE_BYTES = 4;
     protected float[] mTriangleVerticesData = {

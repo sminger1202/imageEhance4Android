@@ -6,6 +6,7 @@ package com.android.enhance;
 
 public interface IEngine {
     int EFFECT_COEFFICIENT = 0x0001;
+    int EFFECT_MVP         = 0x0002;
     void setParameter(int field , float value);
     void setParameters(int field, float[] value);
     @Deprecated

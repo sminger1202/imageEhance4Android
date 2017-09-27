@@ -169,7 +169,12 @@ public class LuminanceEngine extends EngineBase {
     }
     @Override
     protected String getfragmentSource() {
-        return TextResourceReader.readTextFileFromResource(mContext, R.raw.luminance_fragment_shader);
+        String fragmentStr = TextResourceReader.readTextFileFromResource(mContext, R.raw.luminance_fragment_shader);
+
+        if (mIsInnerTexture) {
+            fragmentStr = fragmentStr.replace("samplerExternalOES", "sampler2D");
+        }
+        return fragmentStr;
     }
 
     @Override

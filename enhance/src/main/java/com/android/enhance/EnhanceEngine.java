@@ -67,7 +67,10 @@ public class EnhanceEngine extends EngineBase{
 
     @Override
     public void setParameters(int field, float[] value) {
-
+        if (field == IEngine.EFFECT_MVP) {
+            mTriangleVerticesData = value;
+            initFBO();
+        }
     }
 
     @Override
@@ -146,7 +149,7 @@ public class EnhanceEngine extends EngineBase{
             checkGlError("glUniformMatrix4fv mvpMatrixLoc");
         }
 
-        if (mvpMatrixLocEhn >= 0) {
+        if (texMatrixLocEhn >= 0) {
             GLES30.glUniformMatrix4fv(texMatrixLocEhn, 1, false, texMatrix, 0);
             checkGlError("glUniformMatrix4fv texMatrixLoc");
         }
