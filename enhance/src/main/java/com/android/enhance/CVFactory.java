@@ -14,7 +14,8 @@ public class CVFactory {
     public static String DRAGO = "drago";
     public static String DRAGOTMO = "dragoTMO";
     public static String REDUX = "redux";
-    public static String[] engineList= {ENHANCE, LUMINANCE, DRAGO, DRAGOTMO, REDUX};
+    public static String VIDEO8K = "video8k";
+    public static String[] engineList= {ENHANCE, LUMINANCE, DRAGO, DRAGOTMO, REDUX, VIDEO8K};
     public static IEngine mEngine;
     public static Map<String, IEngine> EngineMap= new TreeMap<String, IEngine>();
     public static synchronized IEngine getEngineInstance(Context context, String EngineType) {
@@ -24,24 +25,23 @@ public class CVFactory {
             } else {
                 if (EngineType == ENHANCE) {
                     mEngine = new EnhanceEngine(context);
-                    EngineMap.put(ENHANCE, mEngine);
                 }
                 if (EngineType == LUMINANCE ) {
                     mEngine = new LuminanceEngine(context);
-                    EngineMap.put(LUMINANCE, mEngine);
                 }
                 if (EngineType == DRAGO ) {
                     mEngine = new DragoEngine(context);
-                    EngineMap.put(DRAGO, mEngine);
                 }
                 if (EngineType == DRAGOTMO) {
                     mEngine = new DragoTMO(context);
-                    EngineMap.put(DRAGOTMO, mEngine);
                 }
                 if (EngineType == REDUX) {
                     mEngine = new ReduxEngine(context);
-                    EngineMap.put(REDUX, mEngine);
                 }
+                if (EngineType == VIDEO8K) {
+                    mEngine = new Video8kEngine(context);
+                }
+                EngineMap.put(EngineType, mEngine);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,7 +55,6 @@ public class CVFactory {
                 EngineMap.get(type).release();
                 EngineMap.remove(type);
             }
-
         }
     }
 }

@@ -106,11 +106,48 @@ const char* VERTEX(enhance)   = "#version 320 es\n"
         "    vPosition = gl_Position;\n"
         "}";
 
+
+const char* FRAGMENT(video8k) = "#version 320 es\n"
+        "#extension GL_OES_EGL_image_external_essl3 : enable\n"
+        "precision mediump float;\n"
+        "uniform float coef;\n"
+        "in vec2 vTextureCoord;\n"
+        "in vec4 vPosition;\n"
+        "out vec4 gl_FragColor;\n"
+        "uniform samplerExternalOES sTexture;\n"
+        "\n"
+        "void main() {\n"
+        "    vec4 center;\n"
+        "    center = texture(sTexture, vTextureCoord);\n"
+        "    gl_FragColor = clamp(center, 0.0, 1.0);\n"
+        "}";
+
+
+
+const char* VERTEX(video8k)   = "#version 320 es\n"
+        "//\n"
+        "uniform mat4 uMVPMatrix;\n"
+        "uniform mat4 uTexMatrix;\n"
+        "in vec4 aPosition;\n"
+        "in vec4 aTextureCoord;\n"
+        "out vec2 vTextureCoord;\n"
+        "out vec4 vPosition;\n"
+        "\n"
+        "void main() {\n"
+        "    gl_Position = uMVPMatrix * aPosition;\n"
+        "    vTextureCoord = (uTexMatrix * aTextureCoord).xy;\n"
+        "    vPosition = gl_Position;\n"
+        "}";
+
+
 JNIEXPORT jstring JNICALL
 getVertexShader( JNIEnv* env, jobject thiz, jstring name) {
     std::string nameStr = jstringToChar(env, name);
     if(nameStr.compare("enhance") == 0) {
-        return env->NewStringUTF(VERTEX(enhance) );
+        return env->NewStringUTF(VERTEX(enhance));
+    }
+    if(nameStr.compare("video8k") == 0) {
+        return env->NewStringUTF(VERTEX(video8k));
     }
 
 //    return env->NewStringUTF("uniform mat4 uMVPMatrix;\n"
@@ -129,6 +166,9 @@ getFragmentShader( JNIEnv* env, jobject thiz, jstring name) {
     LOGE(TAG, "shader name : %s", nameStr.c_str());
     if (nameStr.compare("enhance") == 0) {
         return env->NewStringUTF(FRAGMENT(enhance));
+    }
+    if (nameStr.compare("video8k") == 0) {
+        return env->NewStringUTF(FRAGMENT(video8k));
     }
 
 //    return env->NewStringUTF("#extension GL_OES_EGL_image_external : require\n"

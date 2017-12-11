@@ -1,7 +1,9 @@
 package com.android.enhance;
+
 import android.content.Context;
 import android.opengl.GLES30;
 import android.util.Log;
+
 import static android.opengl.GLES11Ext.GL_TEXTURE_EXTERNAL_OES;
 import static android.opengl.GLES30.GL_TEXTURE_2D;
 
@@ -9,11 +11,8 @@ import static android.opengl.GLES30.GL_TEXTURE_2D;
  * Created by shiming on 2017/5/25.
  */
 
-public class EnhanceEngine extends EngineBase{
+public class Video8kEngine extends EngineBase{
     String TAG = this.getClass().getSimpleName();
-    private int dxLoc = -1;
-    private int dyLoc = -1;
-    private int coefLoc = -1;
     private int mvpMatrixLocEhn = -1;
     private int texMatrixLocEhn = -1;
     private int positionLocEhn = -1;
@@ -23,8 +22,8 @@ public class EnhanceEngine extends EngineBase{
     private float dy = 0.f;
     private float coef = 1.f;
 
-    public EnhanceEngine(Context context){
-        EngineName = CVFactory.ENHANCE;
+    public Video8kEngine(Context context){
+        EngineName = CVFactory.VIDEO8K;
         init(context);
     }
     @Override
@@ -48,14 +47,6 @@ public class EnhanceEngine extends EngineBase{
         checkLocation(mvpMatrixLocEhn, "uMVPMatrix Ehn");
         texMatrixLocEhn = GLES30.glGetUniformLocation(mProgram, "uTexMatrix");
         checkLocation(texMatrixLocEhn, "uTexMatrix Ehn");
-
-//        dxLoc = GLES30.glGetUniformLocation(mProgram, "dx");
-//        checkLocation(dxLoc, "dx Ehn");
-//        dyLoc = GLES30.glGetUniformLocation(mProgram, "dy");
-//        checkLocation(dyLoc, "dy Ehn");
-        coefLoc = GLES30.glGetUniformLocation(mProgram, "coef");
-        checkLocation(coefLoc, "coefficient");
-
     }
 
     @Override
@@ -118,23 +109,21 @@ public class EnhanceEngine extends EngineBase{
         } else {
             mWidth = width;
             mHeight = height;
-            dx = 1.f / mWidth;
-            dy = 1.f / mHeight;
             mCurrentTextureId = srcTextureId;
             isChanged = true;
         }
         saveGLState();
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
         GLES30.glBindTexture(GL_TEXTURE_2D, dstTextureId);
-        if (isChanged) {
+//        if (isChanged) {
             Log.d(TAG, "change dst texture:" + mWidth + "x" + mHeight);
             GLES30.glTexImage2D(GL_TEXTURE_2D, 0, GLES30.GL_RGBA,//allocate storage
                     mWidth, mHeight, 0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, null);
             initTexParams();
-        }
+//        }
 
         GLES30.glBindFramebuffer(GLES30.GL_FRAMEBUFFER, mFBO);
-        if (isChanged) {
+//        if (isChanged) {
             GLES30.glFramebufferTexture2D(
                     GLES30.GL_FRAMEBUFFER,
                     GLES30.GL_COLOR_ATTACHMENT0,
@@ -145,7 +134,7 @@ public class EnhanceEngine extends EngineBase{
             if (status != GLES30.GL_FRAMEBUFFER_COMPLETE) {
                 Log.e(TAG, "glCheckFramebufferStatus error" + status);
             }
-        }
+//        }
 
         GLES30.glBindBuffer(GLES30.GL_ARRAY_BUFFER, mVBO);
 
@@ -163,18 +152,6 @@ public class EnhanceEngine extends EngineBase{
             GLES30.glUniformMatrix4fv(texMatrixLocEhn, 1, false, texMatrix, 0);
             checkGlError("glUniformMatrix4fv texMatrixLoc");
         }
-
-        //dx,dy
-        if (dxLoc >= 0 && dxLoc >= 0) {
-            GLES30.glUniform1f(dxLoc, dx);
-            checkGlError("dxloc");
-
-            GLES30.glUniform1f(dyLoc, dy);
-            checkGlError("dyloc");
-        }
-        GLES30.glUniform1f(coefLoc, coef);
-        checkGlError("effect coefficient");
-
 
         // Enable the "aPosition" vertex attribute.
         GLES30.glEnableVertexAttribArray(positionLocEhn);

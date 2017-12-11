@@ -20,15 +20,16 @@ public abstract class EngineBase implements IEngine{
     protected String EngineName= "notset";
     protected boolean mIsInnerTexture = false;
 
+    protected int mCurrentTextureId = -1;
     protected static final int FLOAT_SIZE_BYTES = 4;
-    protected float[] mTriangleVerticesData = {
+    protected float[] mTriangleVerticesData = {//up
             // X, Y, U, V
             -1.0f, -1.0f, 0.f, 1.f,
             1.0f, -1.0f, 1.f, 1.f,
             -1.0f, 1.0f, 0.f, 0.f,
             1.0f, 1.0f, 1.f, 0.f,
     };
-//    protected float[] mTriangleVerticesData = {
+//    protected float[] mTriangleVerticesData = {//down
 //            // X, Y, U, V
 //            -1.0f, -1.0f, 0.f, 0.f,
 //            1.0f, -1.0f, 1.f, 0.f,
