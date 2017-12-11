@@ -18,10 +18,6 @@ public class Video8kEngine extends EngineBase{
     private int positionLocEhn = -1;
     private int textureCoordLocEhn = -1;
 
-    private float dx = 0.f;
-    private float dy = 0.f;
-    private float coef = 1.f;
-
     public Video8kEngine(Context context){
         EngineName = CVFactory.VIDEO8K;
         init(context);
@@ -52,7 +48,7 @@ public class Video8kEngine extends EngineBase{
     @Override
     public void setParameter(int field, float value) {
         if (field == IEngine.EFFECT_COEFFICIENT) {
-            coef = value;
+            
         }
     }
 
