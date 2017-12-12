@@ -13,8 +13,6 @@ import static android.opengl.GLES30.GL_TEXTURE_2D;
 
 public class Video8kEngine extends EngineBase{
     String TAG = this.getClass().getSimpleName();
-    private int mvpMatrixLocEhn = -1;
-    private int texMatrixLocEhn = -1;
     private int positionLocEhn = -1;
     private int textureCoordLocEhn = -1;
 
@@ -38,17 +36,12 @@ public class Video8kEngine extends EngineBase{
         checkLocation(positionLocEhn, "aPosition Ehn");
         textureCoordLocEhn = GLES30.glGetAttribLocation(mProgram, "aTextureCoord");
         checkLocation(textureCoordLocEhn, "aTextureCoord");
-
-        mvpMatrixLocEhn = GLES30.glGetUniformLocation(mProgram, "uMVPMatrix");
-        checkLocation(mvpMatrixLocEhn, "uMVPMatrix Ehn");
-        texMatrixLocEhn = GLES30.glGetUniformLocation(mProgram, "uTexMatrix");
-        checkLocation(texMatrixLocEhn, "uTexMatrix Ehn");
     }
 
     @Override
     public void setParameter(int field, float value) {
         if (field == IEngine.EFFECT_COEFFICIENT) {
-            
+
         }
     }
 
@@ -138,16 +131,6 @@ public class Video8kEngine extends EngineBase{
         GLES30.glViewport(0, 0,
                 mWidth, mHeight);
         checkGlError("glUseProgram");
-
-        if (mvpMatrixLocEhn >= 0) {
-            GLES30.glUniformMatrix4fv(mvpMatrixLocEhn, 1, false, mvpMatrix, 0);
-            checkGlError("glUniformMatrix4fv mvpMatrixLoc");
-        }
-
-        if (texMatrixLocEhn >= 0) {
-            GLES30.glUniformMatrix4fv(texMatrixLocEhn, 1, false, texMatrix, 0);
-            checkGlError("glUniformMatrix4fv texMatrixLoc");
-        }
 
         // Enable the "aPosition" vertex attribute.
         GLES30.glEnableVertexAttribArray(positionLocEhn);
