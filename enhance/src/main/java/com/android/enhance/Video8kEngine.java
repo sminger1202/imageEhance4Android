@@ -105,7 +105,6 @@ public class Video8kEngine extends EngineBase{
         GLES30.glActiveTexture(GLES30.GL_TEXTURE0);
         GLES30.glBindTexture(GL_TEXTURE_2D, dstTextureId);
 //        if (isChanged) {
-            Log.d(TAG, "change dst texture:" + mWidth + "x" + mHeight);
             GLES30.glTexImage2D(GL_TEXTURE_2D, 0, GLES30.GL_RGBA,//allocate storage
                     mWidth, mHeight, 0, GLES30.GL_RGBA, GLES30.GL_UNSIGNED_BYTE, null);
             initTexParams();
