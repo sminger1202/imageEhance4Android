@@ -23,4 +23,16 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--keep public class MyClass
+-keep public class com.android.enhance.CVFactory {
+    *;
+}
+-keep public interface com.android.enhance.IEngine
+-keep public interface com.android.enhance.IEngine {
+    *;
+}
+-keepattributes *Annotation*
+-verbose
+-printmapping priguardMapping.txt
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
