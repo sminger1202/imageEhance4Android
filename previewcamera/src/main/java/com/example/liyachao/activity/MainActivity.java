@@ -14,6 +14,7 @@ import com.example.liyachao.video.CameraGLSurfaceView;
  * @version 1.0
  * @date 2017/3/1
  */
+import android.view.Choreographer;
 public class MainActivity extends Activity implements View.OnClickListener {
 
     CameraGLSurfaceView mCameraGLSurfaceView;

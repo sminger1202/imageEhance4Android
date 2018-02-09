@@ -4,12 +4,10 @@ import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.opengl.GLSurfaceView;
-import android.os.Debug;
 import android.util.Log;
 import android.view.Surface;
 
 import com.android.enhance.CVFactory;
-import com.android.enhance.EngineBase;
 import com.android.enhance.IEngine;
 
 import java.io.IOException;
@@ -17,9 +15,6 @@ import java.nio.ByteBuffer;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
-//import static com.example.hellojni.EnhanceActivity.initComputerPlatform;
-
 
 /**
  * Created by shiming on 2017/5/18.

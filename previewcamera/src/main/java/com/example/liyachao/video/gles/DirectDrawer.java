@@ -162,14 +162,14 @@ public class DirectDrawer {
     }
 
     public void setTexCoords() {
-        mTextureCoords[0] = 0;
-        mTextureCoords[1] = 1 - mTextHeightRatio;
-        mTextureCoords[2] = 1;
+        mTextureCoords[2] = 0;
         mTextureCoords[3] = 1 - mTextHeightRatio;
         mTextureCoords[4] = 1;
-        mTextureCoords[5] = 0 + mTextHeightRatio;
-        mTextureCoords[6] = 0;
+        mTextureCoords[5] = 1 - mTextHeightRatio;
+        mTextureCoords[6] = 1;
         mTextureCoords[7] = 0 + mTextHeightRatio;
+        mTextureCoords[0] = 0;
+        mTextureCoords[1] = 0 + mTextHeightRatio;
         mTextureCoordsBuffer = ByteBuffer.allocateDirect(mTextureCoords.length * 4).order(ByteOrder.nativeOrder())
                 .asFloatBuffer().put(mTextureCoords);
         mTextureCoordsBuffer.position(0);
